@@ -22,7 +22,7 @@ const AppLayout = () => {
   }, []);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#070B14' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
       {/* Sidebar Navigation */}
       <Sidebar
         mobileOpen={mobileSidebarOpen}
@@ -31,7 +31,7 @@ const AppLayout = () => {
 
       {/* Main Content Area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
-        {/* Ambient background glows */}
+        {/* Ambient subtle background glows */}
         <div
           className="bg-ambient"
           style={{
@@ -39,7 +39,7 @@ const AppLayout = () => {
             left: '20%',
             width: '400px',
             height: '400px',
-            background: 'radial-gradient(circle, rgba(214, 179, 106, 0.08) 0%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%)'
           }}
         />
         <div
@@ -49,7 +49,7 @@ const AppLayout = () => {
             right: '10%',
             width: '450px',
             height: '450px',
-            background: 'radial-gradient(circle, rgba(167, 139, 250, 0.06) 0%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(14, 165, 233, 0.04) 0%, transparent 70%)'
           }}
         />
 

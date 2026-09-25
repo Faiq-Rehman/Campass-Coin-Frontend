@@ -8,24 +8,24 @@ const StatCard = ({
   icon: Icon,
   subtitle,
   trend,
-  color = '#D6B36A',
+  color = '#2563EB',
   className = ''
 }) => {
   return (
     <motion.div
-      whileHover={{ y: -3, transition: { duration: 0.2 } }}
+      whileHover={{ y: -2, transition: { duration: 0.2 } }}
       style={{
-        background: '#111827',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
         borderRadius: '14px',
         padding: '1.25rem 1.5rem',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.35)',
+        boxShadow: '0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)',
         position: 'relative',
         overflow: 'hidden'
       }}
       className={className}
     >
-      {/* Subtle background glow circle */}
+      {/* Subtle background glow */}
       <div
         style={{
           position: 'absolute',
@@ -35,14 +35,14 @@ const StatCard = ({
           height: '80px',
           borderRadius: '50%',
           background: color,
-          opacity: 0.1,
+          opacity: 0.08,
           filter: 'blur(20px)',
           pointerEvents: 'none'
         }}
       />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-        <span style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 500, letterSpacing: '0.02em' }}>
+        <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600, letterSpacing: '0.01em' }}>
           {title}
         </span>
         {Icon && (
@@ -50,7 +50,7 @@ const StatCard = ({
             style={{
               padding: '0.5rem',
               borderRadius: '10px',
-              backgroundColor: `${color}18`,
+              backgroundColor: `${color}14`,
               color: color,
               display: 'flex',
               alignItems: 'center',
@@ -62,7 +62,7 @@ const StatCard = ({
         )}
       </div>
 
-      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', fontFamily: 'var(--font-heading)' }}>
+      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', fontFamily: 'var(--font-heading)' }}>
         {value}
       </div>
 
@@ -74,7 +74,7 @@ const StatCard = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.2rem',
-                color: trend.direction === 'up' ? '#34D399' : '#F87171',
+                color: trend.direction === 'up' ? '#10B981' : '#EF4444',
                 fontWeight: 600
               }}
             >

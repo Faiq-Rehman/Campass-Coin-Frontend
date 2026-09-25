@@ -11,7 +11,7 @@ const AdminRoute = ({ children }) => {
       <div
         style={{
           minHeight: '100vh',
-          background: '#070B14',
+          background: '#F8FAFC',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -23,14 +23,14 @@ const AdminRoute = ({ children }) => {
           style={{
             width: '40px',
             height: '40px',
-            border: '3px solid rgba(214, 179, 106, 0.2)',
-            borderTopColor: '#D6B36A',
+            border: '3px solid #E2E8F0',
+            borderTopColor: '#2563EB',
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite'
           }}
         />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        <p style={{ color: '#94A3B8', fontSize: '0.9rem', fontWeight: 500 }}>
+        <p style={{ color: '#64748B', fontSize: '0.9rem', fontWeight: 600 }}>
           Verifying Administrator Clearance...
         </p>
       </div>

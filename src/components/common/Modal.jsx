@@ -57,25 +57,25 @@ const Modal = ({
             style={{
               position: 'fixed',
               inset: 0,
-              backgroundColor: 'rgba(7, 11, 20, 0.85)',
-              backdropFilter: 'blur(8px)'
+              backgroundColor: 'rgba(15, 23, 42, 0.65)',
+              backdropFilter: 'blur(6px)'
             }}
           />
 
           {/* Modal Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 0.96, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            exit={{ opacity: 0, scale: 0.96, y: 15 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
             style={{
               position: 'relative',
               width: '100%',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(214, 179, 106, 0.25)',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E2E8F0',
               borderRadius: '16px',
-              padding: '1.5rem',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.75)',
+              padding: '1.75rem',
+              boxShadow: '0 20px 50px rgba(15, 23, 42, 0.22)',
               zIndex: 10
             }}
             className={maxWidth}
@@ -87,7 +87,7 @@ const Modal = ({
                 alignItems: 'flex-start',
                 justifyContent: 'space-between',
                 marginBottom: '1.25rem',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                borderBottom: '1px solid #F1F5F9',
                 paddingBottom: '0.85rem'
               }}
             >
@@ -96,7 +96,7 @@ const Modal = ({
                   style={{
                     fontSize: '1.25rem',
                     fontWeight: 700,
-                    color: '#F8FAFC',
+                    color: '#0F172A',
                     margin: 0
                   }}
                 >
@@ -106,7 +106,7 @@ const Modal = ({
                   <p
                     style={{
                       fontSize: '0.85rem',
-                      color: '#94A3B8',
+                      color: '#64748B',
                       marginTop: '0.25rem',
                       marginBottom: 0
                     }}
@@ -118,18 +118,19 @@ const Modal = ({
               <button
                 onClick={onClose}
                 style={{
-                  background: 'transparent',
+                  background: '#F1F5F9',
                   border: 'none',
-                  color: '#94A3B8',
+                  color: '#64748B',
                   cursor: 'pointer',
-                  padding: '4px',
-                  borderRadius: '6px',
+                  padding: '6px',
+                  borderRadius: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  transition: 'background 0.2s, color 0.2s'
                 }}
               >
-                <X className="w-5 h-5 hover:text-white transition-colors" />
+                <X className="w-5 h-5 hover:text-[#0F172A]" />
               </button>
             </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Menu, Bell, Plus, User, Check, ExternalLink } from 'lucide-react';
+import { Menu, Bell, Plus, User, ExternalLink } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import notificationService from '../../services/notificationService';
 import Button from '../common/Button';
@@ -42,8 +42,9 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
     <header
       style={{
         height: '70px',
-        backgroundColor: '#070B14',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        backgroundColor: '#FFFFFF',
+        borderBottom: '1px solid #E2E8F0',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -65,10 +66,10 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
           }}
           className="mobile-menu-button"
           style={{
-            background: 'rgba(17, 24, 39, 0.9)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
+            background: '#F1F5F9',
+            border: '1px solid #CBD5E1',
             borderRadius: '10px',
-            color: '#94A3B8',
+            color: '#334155',
             cursor: 'pointer',
             padding: '8px',
             alignItems: 'center',
@@ -79,10 +80,10 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
         </button>
 
         <div>
-          <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
-            {getGreeting()}, <span style={{ color: '#D6B36A' }}>{user?.fullName?.split(' ')[0] || 'Student'}</span>
+          <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+            {getGreeting()}, <span style={{ color: '#2563EB' }}>{user?.fullName?.split(' ')[0] || 'Student'}</span>
           </h1>
-          <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0 }}>
+          <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0, fontWeight: 500 }}>
             Smart Spending &bull; {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
           </p>
         </div>
@@ -110,14 +111,15 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: unreadCount > 0 ? '#F0D89A' : '#94A3B8',
+              backgroundColor: '#F8FAFC',
+              border: '1px solid #E2E8F0',
+              color: unreadCount > 0 ? '#2563EB' : '#64748B',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              position: 'relative'
+              position: 'relative',
+              transition: 'all 0.2s'
             }}
           >
             <Bell className="w-4 h-4" />
@@ -130,13 +132,14 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
                   width: '18px',
                   height: '18px',
                   borderRadius: '50%',
-                  backgroundColor: '#F87171',
+                  backgroundColor: '#EF4444',
                   color: 'white',
                   fontSize: '0.65rem',
                   fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)'
                 }}
               >
                 {unreadCount > 9 ? '9+' : unreadCount}
@@ -152,22 +155,22 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
                 top: '48px',
                 right: 0,
                 width: '320px',
-                backgroundColor: '#111827',
-                border: '1px solid rgba(214, 179, 106, 0.3)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E2E8F0',
                 borderRadius: '12px',
                 padding: '1rem',
-                boxShadow: '0 15px 35px rgba(0, 0, 0, 0.65)',
+                boxShadow: '0 15px 35px rgba(15, 23, 42, 0.12)',
                 zIndex: 50
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#F8FAFC' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A' }}>
                   Notifications ({unreadCount})
                 </span>
                 <Link
                   to="/notifications"
                   onClick={() => setShowNotifMenu(false)}
-                  style={{ fontSize: '0.75rem', color: '#D6B36A', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px' }}
+                  style={{ fontSize: '0.75rem', color: '#2563EB', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}
                 >
                   View All <ExternalLink className="w-3 h-3" />
                 </Link>
@@ -184,15 +187,16 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
                       key={n._id}
                       style={{
                         padding: '0.5rem 0.65rem',
-                        backgroundColor: n.read ? '#0D1320' : '#151D2E',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        backgroundColor: n.read ? '#F8FAFC' : '#EFF6FF',
+                        border: '1px solid',
+                        borderColor: n.read ? '#E2E8F0' : '#BFDBFE',
                         borderRadius: '8px'
                       }}
                     >
-                      <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#F8FAFC', margin: 0 }}>
+                      <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0F172A', margin: 0 }}>
                         {n.title}
                       </p>
-                      <p style={{ fontSize: '0.75rem', color: '#94A3B8', margin: '2px 0 0 0', lineHeight: 1.3 }}>
+                      <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '2px 0 0 0', lineHeight: 1.3 }}>
                         {n.message}
                       </p>
                     </div>
@@ -218,9 +222,9 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              backgroundColor: 'rgba(214, 179, 106, 0.15)',
-              border: '1px solid rgba(214, 179, 106, 0.3)',
-              color: '#D6B36A',
+              backgroundColor: '#EFF6FF',
+              border: '1px solid #BFDBFE',
+              color: '#2563EB',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

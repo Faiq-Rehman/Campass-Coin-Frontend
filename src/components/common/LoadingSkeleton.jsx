@@ -7,10 +7,10 @@ export const SkeletonItem = ({ height = '20px', width = '100%', borderRadius = '
         height,
         width,
         borderRadius,
-        background: 'linear-gradient(90deg, #111827 25%, #1A2438 50%, #111827 75%)',
+        background: 'linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%)',
         backgroundSize: '200% 100%',
         animation: 'shimmer 1.5s infinite',
-        border: '1px solid rgba(255, 255, 255, 0.04)'
+        border: '1px solid #E2E8F0'
       }}
       className={className}
     >
@@ -28,14 +28,15 @@ export const SkeletonCard = ({ height = '140px', className = '' }) => {
   return (
     <div
       style={{
-        background: '#111827',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
         borderRadius: '14px',
         padding: '1.5rem',
         height,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
       }}
       className={className}
     >
@@ -53,14 +54,15 @@ export const SkeletonTable = ({ rows = 5, cols = 4, className = '' }) => {
   return (
     <div
       style={{
-        background: '#111827',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
         borderRadius: '14px',
-        padding: '1.25rem'
+        padding: '1.25rem',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
       }}
       className={className}
     >
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', paddingBottom: '0.75rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
         {Array.from({ length: cols }).map((_, i) => (
           <SkeletonItem key={i} width={`${100 / cols}%`} height="18px" />
         ))}

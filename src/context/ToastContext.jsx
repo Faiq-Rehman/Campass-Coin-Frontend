@@ -32,26 +32,26 @@ export const ToastProvider = ({ children }) => {
   const getToastIcon = (type) => {
     switch (type) {
       case 'success':
-        return <CheckCircle2 className="w-5 h-5 text-[#34D399] shrink-0" />;
+        return <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0" />;
       case 'error':
-        return <XCircle className="w-5 h-5 text-[#F87171] shrink-0" />;
+        return <XCircle className="w-5 h-5 text-[#EF4444] shrink-0" />;
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-[#FBBF24] shrink-0" />;
+        return <AlertTriangle className="w-5 h-5 text-[#F59E0B] shrink-0" />;
       default:
-        return <Info className="w-5 h-5 text-[#D6B36A] shrink-0" />;
+        return <Info className="w-5 h-5 text-[#2563EB] shrink-0" />;
     }
   };
 
   const getBorderColor = (type) => {
     switch (type) {
       case 'success':
-        return 'rgba(52, 211, 153, 0.4)';
+        return 'rgba(16, 185, 129, 0.35)';
       case 'error':
-        return 'rgba(248, 113, 113, 0.4)';
+        return 'rgba(239, 68, 68, 0.35)';
       case 'warning':
-        return 'rgba(251, 191, 36, 0.4)';
+        return 'rgba(245, 158, 11, 0.35)';
       default:
-        return 'rgba(214, 179, 106, 0.4)';
+        return 'rgba(37, 99, 235, 0.35)';
     }
   };
 
@@ -82,11 +82,11 @@ export const ToastProvider = ({ children }) => {
               transition={{ duration: 0.2 }}
               style={{
                 pointerEvents: 'auto',
-                background: '#111827',
+                background: '#FFFFFF',
                 border: `1px solid ${getBorderColor(t.type)}`,
-                borderRadius: '10px',
+                borderRadius: '12px',
                 padding: '0.85rem 1rem',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.65)',
+                boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -97,7 +97,7 @@ export const ToastProvider = ({ children }) => {
               <span
                 style={{
                   fontSize: '0.9rem',
-                  color: '#F8FAFC',
+                  color: '#0F172A',
                   fontWeight: 500,
                   flex: 1,
                   lineHeight: 1.4
@@ -108,16 +108,17 @@ export const ToastProvider = ({ children }) => {
               <button
                 onClick={() => removeToast(t.id)}
                 style={{
-                  background: 'transparent',
+                  background: '#F1F5F9',
                   border: 'none',
-                  color: '#94A3B8',
+                  color: '#64748B',
                   cursor: 'pointer',
-                  padding: '2px',
+                  padding: '4px',
+                  borderRadius: '6px',
                   display: 'flex',
                   alignItems: 'center'
                 }}
               >
-                <X className="w-4 h-4 hover:text-white transition-colors" />
+                <X className="w-4 h-4 hover:text-[#0F172A] transition-colors" />
               </button>
             </motion.div>
           ))}

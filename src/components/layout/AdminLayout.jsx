@@ -4,13 +4,13 @@ import AdminSidebar from './AdminSidebar';
 
 const AdminLayout = () => {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#070B14' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
       {/* Admin Sidebar */}
       <AdminSidebar />
 
       {/* Main Admin Content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
-        {/* Subtle purple admin glow */}
+        {/* Subtle royal blue admin glow */}
         <div
           className="bg-ambient"
           style={{
@@ -18,7 +18,7 @@ const AdminLayout = () => {
             right: '15%',
             width: '450px',
             height: '450px',
-            background: 'radial-gradient(circle, rgba(167, 139, 250, 0.08) 0%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%)'
           }}
         />
 

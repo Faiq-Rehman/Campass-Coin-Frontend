@@ -1,17 +1,23 @@
 import axios from 'axios';
 
-// Live Railway backend base URL configured in frontend/.env
-const rawBaseURL = import.meta.env.VITE_API_URL || 'https://campus-coin-backend.up.railway.app/api';
+// Live Railway backend base URL configuration
+let rawBase = (import.meta.env.VITE_API_URL || 'https://campass-coin-backend-production.up.railway.app').trim();
 
-// Guarantee that trailing slashes are trimmed
-const cleanBaseURL = rawBaseURL.endsWith('/') ? rawBaseURL.slice(0, -1) : rawBaseURL;
+// Ensure protocol is present
+if (!rawBase.startsWith('http://') && !rawBase.startsWith('https://')) {
+  rawBase = `https://${rawBase}`;
+}
+
+// Guarantee trailing slash is stripped and /api route prefix is intact
+rawBase = rawBase.replace(/\/+$/, '');
+const cleanBaseURL = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`;
 
 const api = axios.create({
   baseURL: cleanBaseURL,
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 20000 // 20s network timeout
+  timeout: 30000 // 30s timeout for live server
 });
 
 // Request Interceptor: Attach JWT Token from localStorage
@@ -31,19 +37,38 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Friendly error extraction
+// Response Interceptor: Friendly error extraction & session handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Format error message cleanly
-    const message =
+    const status = error.response?.status;
+    const url = error.config?.url || '';
+
+    // If session has expired or token is invalid on a protected route, safely clear stale token
+    if (status === 401 && !url.includes('/login') && !url.includes('/register')) {
+      if (url.startsWith('/admin')) {
+        localStorage.removeItem('campus_coin_admin_token');
+        localStorage.removeItem('campus_coin_admin_user');
+      } else {
+        localStorage.removeItem('campus_coin_token');
+        localStorage.removeItem('campus_coin_user');
+      }
+    }
+
+    // Format error message cleanly from backend response
+    let message =
       error.response?.data?.message ||
+      (error.response?.data?.errors && error.response.data.errors[0]?.msg) ||
       error.message ||
       'Unable to connect to the live server. Please check your internet connection.';
 
-    // Attach human-readable message for UI components
+    // If network error
+    if (error.code === 'ERR_NETWORK') {
+      message = 'Live backend is currently unreachable. Please check your internet or retry in a few moments.';
+    }
+
     const customError = new Error(message);
-    customError.status = error.response?.status;
+    customError.status = status;
     customError.errors = error.response?.data?.errors;
     customError.originalError = error;
 

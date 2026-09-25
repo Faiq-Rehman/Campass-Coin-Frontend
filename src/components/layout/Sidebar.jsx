@@ -50,7 +50,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
         flexDirection: 'column',
         height: '100%',
         padding: '1.5rem 1rem',
-        backgroundColor: '#0D1320',
+        backgroundColor: '#0A1128',
         borderRight: '1px solid rgba(255, 255, 255, 0.08)',
         boxSizing: 'border-box'
       }}
@@ -71,12 +71,12 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               width: '40px',
               height: '40px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #F0D89A 0%, #D6B36A 100%)',
-              color: '#070B14',
+              background: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
+              color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 15px rgba(214, 179, 106, 0.3)'
+              boxShadow: '0 4px 15px rgba(37, 99, 235, 0.35)'
             }}
           >
             <Coins size={20} />
@@ -96,7 +96,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             <span
               style={{
                 fontSize: '0.7rem',
-                color: '#D6B36A',
+                color: '#38BDF8',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
@@ -122,8 +122,8 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               right: '0',
               width: '34px',
               height: '34px',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(148, 163, 184, 0.2)',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
               color: '#94A3B8',
               cursor: 'pointer',
               display: 'flex',
@@ -168,10 +168,10 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0.6rem 0.75rem',
-            background: '#111827',
+            padding: '0.65rem 0.75rem',
+            background: 'rgba(255, 255, 255, 0.05)',
             borderRadius: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.06)'
+            border: '1px solid rgba(255, 255, 255, 0.08)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', overflow: 'hidden' }}>
@@ -180,8 +180,8 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
                 width: '32px',
                 height: '32px',
                 borderRadius: '50%',
-                background: 'rgba(214, 179, 106, 0.15)',
-                color: '#D6B36A',
+                background: 'rgba(37, 99, 235, 0.3)',
+                color: '#38BDF8',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -209,7 +209,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               <p
                 style={{
                   fontSize: '0.7rem',
-                  color: '#64748B',
+                  color: '#94A3B8',
                   margin: 0,
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
@@ -227,9 +227,10 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#F87171',
+              color: '#EF4444',
               cursor: 'pointer',
-              padding: '4px',
+              padding: '6px',
+              borderRadius: '6px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'

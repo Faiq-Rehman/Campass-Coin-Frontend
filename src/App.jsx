@@ -64,27 +64,27 @@ const AdminLoginPage = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', background: '#070B14' }}>
-      <Card goldBorder style={{ width: '100%', maxWidth: '420px', padding: '2rem' }}>
-        <h2 style={{ marginBottom: '0.5rem', color: '#F8FAFC', fontSize: '1.8rem' }}>Admin Login</h2>
-        <p style={{ color: '#94A3B8', marginBottom: '1.5rem' }}>Sign in to manage the Campus Coin platform.</p>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', background: '#F8FAFC' }}>
+      <Card style={{ width: '100%', maxWidth: '420px', padding: '2.25rem', boxShadow: '0 20px 40px rgba(15, 23, 42, 0.08)', border: '1px solid #E2E8F0' }}>
+        <h2 style={{ marginBottom: '0.5rem', color: '#0F172A', fontSize: '1.8rem', fontWeight: 700 }}>Admin Login</h2>
+        <p style={{ color: '#64748B', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Sign in to manage the Campus Coin platform.</p>
 
         {errorMsg && (
-          <div style={{ marginBottom: '1rem', padding: '0.8rem 1rem', borderRadius: '10px', background: 'rgba(248, 113, 113, 0.12)', border: '1px solid rgba(248, 113, 113, 0.3)', color: '#F87171' }}>
+          <div style={{ marginBottom: '1rem', padding: '0.8rem 1rem', borderRadius: '10px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: '0.88rem' }}>
             {errorMsg}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
           <div>
             <label className="input-label">Username</label>
-            <input className="luxury-input" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="admin" />
+            <input className="luxury-input" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="admin" required />
           </div>
           <div>
             <label className="input-label">Password</label>
-            <input type="password" className="luxury-input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+            <input type="password" className="luxury-input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
           </div>
-          <Button type="submit" variant="gold" loading={loading} style={{ width: '100%' }}>Continue to admin portal</Button>
+          <Button type="submit" variant="gold" loading={loading} style={{ width: '100%', marginTop: '0.5rem' }}>Continue to admin portal</Button>
         </form>
       </Card>
     </div>

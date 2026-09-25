@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const Button = ({
   children,
-  variant = 'gold', // 'gold' | 'outline' | 'danger' | 'ghost' | 'soft'
+  variant = 'gold', // 'gold' | 'primary' | 'outline' | 'danger' | 'ghost' | 'soft'
   size = 'md', // 'sm' | 'md' | 'lg'
   loading = false,
   disabled = false,
@@ -20,9 +20,11 @@ const Button = ({
       case 'danger':
         return 'btn-danger';
       case 'ghost':
-        return 'bg-transparent text-[#94A3B8] hover:text-white hover:bg-white/5 border border-transparent';
+        return 'bg-transparent text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] border border-transparent';
       case 'soft':
-        return 'bg-[#151D2E] text-[#D6B36A] hover:bg-[#1A2438] border border-[rgba(214,179,106,0.25)]';
+        return 'bg-[#EFF6FF] text-[#1D4ED8] hover:bg-[#DBEAFE] border border-[#BFDBFE]';
+      case 'primary':
+      case 'gold':
       default:
         return 'btn-gold';
     }
@@ -42,7 +44,7 @@ const Button = ({
   return (
     <motion.button
       type={type}
-      whileHover={!disabled && !loading ? { scale: 1.02 } : {}}
+      whileHover={!disabled && !loading ? { scale: 1.01 } : {}}
       whileTap={!disabled && !loading ? { scale: 0.98 } : {}}
       disabled={disabled || loading}
       onClick={onClick}
