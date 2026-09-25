@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Wallet,
   ArrowDownLeft,
@@ -15,20 +15,30 @@ import {
   X,
   ChevronRight,
   TrendingUp,
-  Tag
+  Tag,
+  Bot,
+  CheckCircle2,
+  Calendar,
+  Layers,
+  BarChart3
 } from 'lucide-react';
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid
+  CartesianGrid,
+  Legend
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import dashboardService from '../services/dashboardService';
+import transactionService from '../services/transactionService';
+import categoryService from '../services/categoryService';
 import tipService from '../services/tipService';
 import StatCard from '../components/common/StatCard';
 import Card from '../components/common/Card';
@@ -47,16 +57,41 @@ const Dashboard = () => {
   const outletContext = useOutletContext();
 
   const [dashboardData, setDashboardData] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Spending Trends filter state
+  const [trendTimeframe, setTrendTimeframe] = useState('daily');
+  const [spendingTrendsData, setSpendingTrendsData] = useState([]);
+  const [loadingTrends, setLoadingTrends] = useState(false);
+
+  // Quick Expense Entry Form state
+  const [quickAmount, setQuickAmount] = useState('');
+  const [quickDesc, setQuickDesc] = useState('');
+  const [quickCategory, setQuickCategory] = useState('');
+  const [aiSuggestedCat, setAiSuggestedCat] = useState(null);
+  const [aiConfidence, setAiConfidence] = useState(0);
+  const [loggingExpense, setLoggingExpense] = useState(false);
+
+  // Fetch complete dashboard payload
   const fetchDashboard = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await dashboardService.getDashboardData();
+      const [res, catRes] = await Promise.all([
+        dashboardService.getDashboardData(),
+        categoryService.getCategories('expense')
+      ]);
+
       if (res.success && res.data) {
         setDashboardData(res.data);
+        if (res.data.spendingTrends) {
+          setSpendingTrendsData(res.data.spendingTrends);
+        }
+      }
+      if (catRes.success && catRes.data) {
+        setCategories(catRes.data);
       }
     } catch (err) {
       setError(err.message || 'Unable to load dashboard data. Please check your connection.');
@@ -68,11 +103,100 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDashboard();
 
-    // Listen for global transaction update events (from quick modal)
     const handleTxUpdate = () => fetchDashboard();
     window.addEventListener('transaction-updated', handleTxUpdate);
     return () => window.removeEventListener('transaction-updated', handleTxUpdate);
   }, []);
+
+  // Fetch updated spending trends whenever the timeframe filter changes
+  const handleTimeframeChange = async (tf) => {
+    setTrendTimeframe(tf);
+    try {
+      setLoadingTrends(true);
+      const res = await dashboardService.getSpendingTrends(tf);
+      if (res.success && res.data) {
+        setSpendingTrendsData(res.data);
+      }
+    } catch (err) {
+      console.error('Error fetching spending trends:', err);
+    } finally {
+      setLoadingTrends(false);
+    }
+  };
+
+  // AI Auto-Categorization on Description Typing
+  useEffect(() => {
+    if (!quickDesc.trim()) {
+      setAiSuggestedCat(null);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await transactionService.suggestCategory(quickDesc, 'expense');
+        if (res.success && res.data && res.data.suggestedCategoryName) {
+          const matchedDoc = categories.find((c) =>
+            c.name.toLowerCase() === res.data.suggestedCategoryName.toLowerCase()
+          );
+
+          if (matchedDoc) {
+            setAiSuggestedCat(matchedDoc);
+            setAiConfidence(res.data.confidence || 0.85);
+            // Pre-select if student hasn't manually selected yet
+            if (!quickCategory) {
+              setQuickCategory(matchedDoc._id);
+            }
+          }
+        } else {
+          setAiSuggestedCat(null);
+        }
+      } catch (e) {
+        // Silent advisory fail
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [quickDesc, categories]);
+
+  // Handle Quick Expense Submission
+  const handleLogQuickExpense = async (e) => {
+    e.preventDefault();
+    if (!quickAmount || Number(quickAmount) <= 0) {
+      toast.error('Please enter a valid expense amount');
+      return;
+    }
+
+    const selectedCatId = quickCategory || (aiSuggestedCat ? aiSuggestedCat._id : (categories[0]?._id));
+    if (!selectedCatId) {
+      toast.error('Please select an expense category');
+      return;
+    }
+
+    try {
+      setLoggingExpense(true);
+      const res = await transactionService.createTransaction({
+        amount: Number(quickAmount),
+        category: selectedCatId,
+        type: 'expense',
+        description: quickDesc.trim() || 'Quick Expense',
+        date: new Date().toISOString()
+      });
+
+      if (res.success) {
+        toast.success(`Logged ${formatCurrency(quickAmount)} expense successfully!`);
+        setQuickAmount('');
+        setQuickDesc('');
+        setQuickCategory('');
+        setAiSuggestedCat(null);
+        fetchDashboard();
+        window.dispatchEvent(new Event('transaction-updated'));
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to log expense');
+    } finally {
+      setLoggingExpense(false);
+    }
+  };
 
   const handlePinTip = async (tipId) => {
     try {
@@ -129,12 +253,12 @@ const Dashboard = () => {
     budgetVsActual = [],
     budgetWarnings = [],
     recentTransactions = [],
-    spendingTrend = [],
+    incomeVsExpense = [],
     savingTips = []
   } = dashboardData || {};
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', paddingBottom: '3rem' }}>
       {/* 1. Header Banner & Quick Actions */}
       <div
         style={{
@@ -146,22 +270,36 @@ const Dashboard = () => {
         }}
       >
         <div>
-          <span className="badge-gold" style={{ marginBottom: '0.4rem' }}>
-            {currentMonthName} Academic Term
+          <span
+            style={{
+              background: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              color: '#00E699',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              padding: '0.2rem 0.65rem',
+              borderRadius: '9999px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              marginBottom: '0.35rem'
+            }}
+          >
+            <Calendar size={13} /> {currentMonthName} Term
           </span>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: '#F8FAFC' }}>
+          <h1 style={{ fontSize: '1.65rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
             Financial Overview
-          </h2>
+          </h1>
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <Button
-            variant="gold"
+            variant="outline"
             size="sm"
-            icon={Plus}
-            onClick={() => outletContext?.openQuickAdd ? outletContext.openQuickAdd() : navigate('/transactions')}
+            icon={Bot}
+            onClick={() => navigate('/ai-assistant')}
           >
-            Record Entry
+            AI Assistant
           </Button>
           <Button
             variant="outline"
@@ -169,7 +307,7 @@ const Dashboard = () => {
             icon={PiggyBank}
             onClick={() => navigate('/budgets')}
           >
-            Set Budget
+            Manage Budgets
           </Button>
           <Button
             variant="outline"
@@ -188,8 +326,8 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           style={{
-            background: 'rgba(251, 191, 36, 0.1)',
-            border: '1px solid rgba(251, 191, 36, 0.3)',
+            background: 'rgba(245, 158, 11, 0.12)',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
             borderRadius: '12px',
             padding: '1rem 1.25rem',
             display: 'flex',
@@ -197,10 +335,10 @@ const Dashboard = () => {
             gap: '0.75rem'
           }}
         >
-          <AlertTriangle className="w-5 h-5 text-[#FBBF24] shrink-0" />
-          <div style={{ flex: 1, fontSize: '0.85rem', color: '#F8FAFC' }}>
-            <strong>Budget Alert:</strong> You have consumed over 80% of your budget for{' '}
-            <span style={{ color: '#FBBF24', fontWeight: 600 }}>
+          <AlertTriangle className="w-5 h-5 text-[#F59E0B] shrink-0" />
+          <div style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+            <strong>Budget Alert:</strong> You have reached over 80% limit on{' '}
+            <span style={{ color: '#F59E0B', fontWeight: 700 }}>
               {budgetWarnings.map((b) => `${b.category} (${b.percentageUsed}%)`).join(', ')}
             </span>.
           </div>
@@ -210,13 +348,13 @@ const Dashboard = () => {
         </motion.div>
       )}
 
-      {/* 3. Stat Cards Grid (Balance, Income, Expenses, Savings) */}
+      {/* 3. Stat Cards Grid (Live MongoDB Balance, Income, Expenses, Savings) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '1rem' }}>
         <StatCard
           title="Current Balance"
           value={formatCurrency(summary.currentBalance || 0)}
           icon={Wallet}
-          color="#D6B36A"
+          color="#10B981"
           subtitle={`Allowance baseline: ${formatCurrency(summary.monthlyAllowance || 0)}`}
         />
 
@@ -224,7 +362,7 @@ const Dashboard = () => {
           title="Income This Month"
           value={formatCurrency(summary.incomeThisMonth || 0)}
           icon={ArrowUpRight}
-          color="#34D399"
+          color="#00E699"
           trend={{ direction: 'up', value: 'Recorded' }}
           subtitle="Allowances & earnings"
         />
@@ -233,7 +371,7 @@ const Dashboard = () => {
           title="Expenses This Month"
           value={formatCurrency(summary.expenseThisMonth || 0)}
           icon={ArrowDownLeft}
-          color="#F87171"
+          color="#EF4444"
           subtitle={topSpendingCategory ? `Top: ${topSpendingCategory.name}` : 'No expenses logged'}
         />
 
@@ -241,7 +379,7 @@ const Dashboard = () => {
           title="Net Savings"
           value={formatCurrency(summary.netSavingsThisMonth || 0)}
           icon={PiggyBank}
-          color="#A78BFA"
+          color="#06B6D4"
           subtitle={
             summary.savingsGoal > 0
               ? `${summary.savingsGoalProgress || 0}% of target ${formatCurrency(summary.savingsGoal)}`
@@ -250,106 +388,313 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* 4. Spending Trend Chart & Top Category Preview */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-        {/* 7-Day Spending Trend AreaChart */}
-        <Card style={{ flex: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-            <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>7-Day Spending Activity</h3>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Daily expense distribution</p>
+      {/* 4. Quick Expense Entry & AI Auto-Categorization Card */}
+      <Card style={{ padding: '1.5rem', border: '1px solid var(--border-accent)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #10B981 0%, #06B6D4 100%)',
+                color: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Plus size={18} />
             </div>
-            <span className="badge-gold">Daily Realtime</span>
+            <div>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                Quick Expense Entry & AI Auto-Categorization
+              </h2>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                Real-time AI matching as you type description (e.g. "Campus Cafe", "Textbook")
+              </span>
+            </div>
           </div>
 
-          <div style={{ width: '100%', height: '220px' }}>
+          {aiSuggestedCat && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              style={{
+                background: 'rgba(0, 230, 153, 0.12)',
+                border: '1px solid rgba(0, 230, 153, 0.35)',
+                color: '#00E699',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '8px',
+                fontSize: '0.78rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontWeight: 600
+              }}
+            >
+              <Sparkles size={14} /> AI Suggested: <strong>{aiSuggestedCat.name}</strong> ({Math.round(aiConfidence * 100)}%)
+            </motion.div>
+          )}
+        </div>
+
+        <form onSubmit={handleLogQuickExpense} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr)) 140px', gap: '0.85rem', alignItems: 'flex-end' }}>
+          <div>
+            <label className="input-label">Amount ($)</label>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              className="luxury-input"
+              value={quickAmount}
+              onChange={(e) => setQuickAmount(e.target.value)}
+              placeholder="e.g. 14.50"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="input-label">Description (Smart AI Match)</label>
+            <input
+              type="text"
+              className="luxury-input"
+              value={quickDesc}
+              onChange={(e) => setQuickDesc(e.target.value)}
+              placeholder="e.g. Campus Cafe, Bus Pass..."
+              required
+            />
+          </div>
+
+          <div>
+            <label className="input-label">Category (Manual Override)</label>
+            <select
+              className="luxury-select"
+              value={quickCategory}
+              onChange={(e) => setQuickCategory(e.target.value)}
+            >
+              <option value="">{aiSuggestedCat ? `AI: ${aiSuggestedCat.name}` : 'Select Category'}</option>
+              {categories.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <Button type="submit" variant="gold" loading={loggingExpense} style={{ height: '42px', width: '100%' }}>
+            Log Expense
+          </Button>
+        </form>
+      </Card>
+
+      {/* 5. Spending Trends Widget (Multi-category Line Chart with Daily, Weekly, Monthly, 6-Month Filters) */}
+      <Card style={{ padding: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <TrendingUp className="w-5 h-5 text-[#00E699]" />
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                Spending Trends Widget
+              </h2>
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '3px 0 0 0' }}>
+              Live transaction data categorized by Food, Social, Academics, Subscriptions
+            </p>
+          </div>
+
+          {/* Timeframe Filter Buttons */}
+          <div style={{ display: 'flex', gap: '0.35rem', background: 'var(--bg-secondary)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border)' }}>
+            {[
+              { id: 'daily', label: 'Daily (7D)' },
+              { id: 'weekly', label: 'Weekly (4W)' },
+              { id: 'monthly', label: 'Monthly' },
+              { id: 'sixMonths', label: '6-Month' }
+            ].map((tf) => (
+              <button
+                key={tf.id}
+                type="button"
+                onClick={() => handleTimeframeChange(tf.id)}
+                style={{
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '7px',
+                  border: 'none',
+                  background: trendTimeframe === tf.id ? 'var(--bg-primary)' : 'transparent',
+                  color: trendTimeframe === tf.id ? '#00E699' : 'var(--text-secondary)',
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: trendTimeframe === tf.id ? 'var(--shadow-sm)' : 'none'
+                }}
+              >
+                {tf.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Multi-Line Recharts Chart */}
+        <div style={{ width: '100%', height: '280px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={spendingTrendsData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <XAxis dataKey="label" stroke="var(--text-dim)" fontSize={11} />
+              <YAxis stroke="var(--text-dim)" fontSize={11} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  color: 'var(--text-primary)',
+                  fontSize: '12px'
+                }}
+                formatter={(val, name) => [formatCurrency(val), name]}
+              />
+              <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+              <Line type="monotone" dataKey="Food" stroke="#F59E0B" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+              <Line type="monotone" dataKey="Social" stroke="#A855F7" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Academics" stroke="#10B981" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Subscriptions" stroke="#EF4444" strokeWidth={2} dot={{ r: 3 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* 6. Income vs Expense Widget (Dynamic Live Bar Chart) & Top Category Highlight */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+        {/* Income vs Expense Bar Chart */}
+        <Card style={{ flex: 1.5, padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <BarChart3 className="w-5 h-5 text-[#00E699]" />
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                  Income vs Expense Widget
+                </h2>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '2px 0 0 0' }}>
+                Dynamic inflow vs outflow calculated live from MongoDB
+              </p>
+            </div>
+            <span
+              style={{
+                fontSize: '0.72rem',
+                color: '#00E699',
+                background: 'rgba(0, 230, 153, 0.12)',
+                padding: '0.2rem 0.6rem',
+                borderRadius: '6px',
+                fontWeight: 600
+              }}
+            >
+              6 Months Live
+            </span>
+          </div>
+
+          <div style={{ width: '100%', height: '240px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={spendingTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D6B36A" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#D6B36A" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="date" stroke="#64748B" fontSize={11} tickFormatter={(d) => d.slice(5)} />
-                <YAxis stroke="#64748B" fontSize={11} />
+              <BarChart data={incomeVsExpense} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="label" stroke="var(--text-dim)" fontSize={11} />
+                <YAxis stroke="var(--text-dim)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111827',
-                    border: '1px solid rgba(214, 179, 106, 0.4)',
-                    borderRadius: '8px',
-                    color: '#F8FAFC',
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '10px',
+                    color: 'var(--text-primary)',
                     fontSize: '12px'
                   }}
-                  formatter={(value) => [formatCurrency(value), 'Spent']}
+                  formatter={(val, name) => [formatCurrency(val), name === 'income' ? 'Income' : 'Expense']}
                 />
-                <Area type="monotone" dataKey="amount" stroke="#D6B36A" strokeWidth={2.5} fillOpacity={1} fill="url(#spendGrad)" />
-              </AreaChart>
+                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                <Bar dataKey="income" fill="#10B981" radius={[4, 4, 0, 0]} name="Income" />
+                <Bar dataKey="expense" fill="#EF4444" radius={[4, 4, 0, 0]} name="Expense" />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        {/* Top Category & Goal Progress */}
-        <Card style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Dynamic Highlight: This Month Top Category */}
+        <Card style={{ flex: 1, padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Major Cost Center</h3>
-              <Tag className="w-4 h-4 text-[#D6B36A]" />
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                This Month Top Category
+              </h2>
+              <Tag className="w-4 h-4 text-[#00E699]" />
             </div>
 
             {topSpendingCategory ? (
-              <div style={{ background: '#0D1320', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ background: 'var(--bg-secondary)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC' }}>
+                  <span style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {topSpendingCategory.name}
                   </span>
-                  <Badge variant="warning">{topSpendingCategory.percentage}% of Spend</Badge>
+                  <span
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.15)',
+                      color: '#EF4444',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700
+                    }}
+                  >
+                    {topSpendingCategory.percentage}% of Spend
+                  </span>
                 </div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#F87171' }}>
+                <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#EF4444' }}>
                   {formatCurrency(topSpendingCategory.amount)}
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.4rem', margin: 0 }}>
-                  Highest outflow in {currentMonthName}
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.5rem', margin: 0 }}>
+                  Largest cost center for {currentMonthName}.
                 </p>
               </div>
             ) : (
-              <p style={{ color: '#64748B', fontSize: '0.85rem' }}>No expenses recorded this month.</p>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>No expenses recorded this month.</p>
             )}
           </div>
 
-          {/* Savings Goal Progress Meter */}
-          <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '1rem' }}>
+          {/* Savings Target Progress Meter */}
+          <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-              <span style={{ color: '#94A3B8' }}>Semester Savings Goal</span>
-              <span style={{ color: '#34D399', fontWeight: 700 }}>{summary.savingsGoalProgress || 0}%</span>
+              <span style={{ color: 'var(--text-dim)' }}>Monthly Savings Progress</span>
+              <span style={{ color: '#00E699', fontWeight: 700 }}>{summary.savingsGoalProgress || 0}%</span>
             </div>
-            <div style={{ width: '100%', height: '8px', backgroundColor: '#0D1320', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
               <div
                 style={{
                   width: `${Math.min(100, summary.savingsGoalProgress || 0)}%`,
                   height: '100%',
-                  background: 'linear-gradient(90deg, #D6B36A 0%, #34D399 100%)',
+                  background: 'linear-gradient(90deg, #10B981 0%, #06B6D4 100%)',
                   borderRadius: '4px',
                   transition: 'width 0.5s ease-out'
                 }}
               />
             </div>
-            <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', marginTop: '0.4rem' }}>
-              Target: {formatCurrency(summary.savingsGoal || 0)}
+            <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+              Goal: {formatCurrency(summary.savingsGoal || 0)} &bull; Saved: {formatCurrency(Math.max(0, summary.netSavingsThisMonth || 0))}
             </span>
           </div>
         </Card>
       </div>
 
-      {/* 5. Budget vs Actual & Recent Transactions */}
+      {/* 7. Dynamic Highlight: Budget vs Actual with Real-Time Budget Progress Bars */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-        {/* Budget vs Actual Widget */}
-        <Card>
+        {/* Real-Time Budget Progress Bars */}
+        <Card style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Active Budgets</h3>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Live consumption monitoring</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <PiggyBank className="w-5 h-5 text-[#00E699]" />
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                  Budget vs Actual
+                </h2>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '2px 0 0 0' }}>
+                Real-time progress bars: green (safe), orange (80%), red (maxed out)
+              </p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate('/budgets')}>
               Manage <ChevronRight className="w-4 h-4" />
@@ -359,47 +704,99 @@ const Dashboard = () => {
           {budgetVsActual.length === 0 ? (
             <EmptyState
               icon={PiggyBank}
-              title="No Budgets Active"
-              description="Keep your spending under control by setting monthly limits."
+              title="No Active Budgets"
+              description="Establish monthly spending limits for Food, Transport, or Entertainment."
               actionText="Create Budget"
               onAction={() => navigate('/budgets')}
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {budgetVsActual.map((b) => (
-                <div key={b.budgetId} style={{ background: '#0D1320', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#F8FAFC' }}>{b.category}</span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: b.isOverBudget ? '#F87171' : b.percentageUsed >= 80 ? '#FBBF24' : '#34D399' }}>
-                      {b.percentageUsed}%
-                    </span>
+              {budgetVsActual.map((b) => {
+                // Status color calculation: green for safe (<80%), orange for 80% limit, red for maxed out (>=100%)
+                const statusColor = b.isOverBudget || b.percentageUsed >= 100
+                  ? '#EF4444' // Maxed out
+                  : b.percentageUsed >= 80
+                  ? '#F59E0B' // 80% warning
+                  : '#10B981'; // Safe
+
+                const statusLabel = b.percentageUsed >= 100
+                  ? 'Maxed Out'
+                  : b.percentageUsed >= 80
+                  ? '80% Threshold'
+                  : 'Safe Balance';
+
+                return (
+                  <div
+                    key={b.budgetId}
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      padding: '0.9rem 1rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                        {b.category}
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span
+                          style={{
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                            padding: '0.15rem 0.45rem',
+                            borderRadius: '4px',
+                            backgroundColor: `${statusColor}20`,
+                            color: statusColor,
+                            border: `1px solid ${statusColor}40`
+                          }}
+                        >
+                          {statusLabel}
+                        </span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: statusColor }}>
+                          {b.percentageUsed}%
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div style={{ width: '100%', height: '8px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${Math.min(100, b.percentageUsed)}%`,
+                          height: '100%',
+                          backgroundColor: statusColor,
+                          borderRadius: '4px',
+                          transition: 'width 0.4s ease'
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.45rem' }}>
+                      <span>Spent: <strong style={{ color: 'var(--text-primary)' }}>{formatCurrency(b.spentAmount)}</strong></span>
+                      <span>Remaining: <strong style={{ color: statusColor }}>{formatCurrency(b.remainingAmount)}</strong></span>
+                      <span>Limit: {formatCurrency(b.limitAmount)}</span>
+                    </div>
                   </div>
-                  <div style={{ width: '100%', height: '6px', backgroundColor: '#111827', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        width: `${Math.min(100, b.percentageUsed)}%`,
-                        height: '100%',
-                        backgroundColor: b.isOverBudget ? '#F87171' : b.percentageUsed >= 80 ? '#FBBF24' : '#34D399',
-                        borderRadius: '3px'
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748B', marginTop: '0.35rem' }}>
-                    <span>Spent: {formatCurrency(b.spentAmount)}</span>
-                    <span>Limit: {formatCurrency(b.limitAmount)}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </Card>
 
         {/* Recent Transactions Widget */}
-        <Card>
+        <Card style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Recent Activity</h3>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Latest student records</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Receipt className="w-5 h-5 text-[#00E699]" />
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                  Recent Transactions
+                </h2>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '2px 0 0 0' }}>
+                Live database transaction activity
+              </p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate('/transactions')}>
               All <ChevronRight className="w-4 h-4" />
@@ -410,9 +807,9 @@ const Dashboard = () => {
             <EmptyState
               icon={Receipt}
               title="No Transactions"
-              description="Start recording your daily food, transport, or allowances."
-              actionText="Add Entry"
-              onAction={() => outletContext?.openQuickAdd ? outletContext.openQuickAdd() : navigate('/transactions')}
+              description="Record your food, transport, or allowances using the form above."
+              actionText="Record Entry"
+              onAction={() => window.scrollTo({ top: 300, behavior: 'smooth' })}
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -424,9 +821,9 @@ const Dashboard = () => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '0.65rem 0.85rem',
-                    background: '#0D1320',
+                    background: 'var(--bg-secondary)',
                     borderRadius: '10px',
-                    border: '1px solid rgba(255,255,255,0.04)'
+                    border: '1px solid var(--border)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
@@ -435,8 +832,8 @@ const Dashboard = () => {
                         width: '34px',
                         height: '34px',
                         borderRadius: '8px',
-                        backgroundColor: tx.type === 'income' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(248, 113, 113, 0.15)',
-                        color: tx.type === 'income' ? '#34D399' : '#F87171',
+                        backgroundColor: tx.type === 'income' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                        color: tx.type === 'income' ? '#00E699' : '#EF4444',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -446,10 +843,10 @@ const Dashboard = () => {
                       {tx.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownLeft className="w-4 h-4" />}
                     </div>
                     <div style={{ overflow: 'hidden' }}>
-                      <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#F8FAFC', margin: 0 }} className="truncate">
+                      <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }} className="truncate">
                         {tx.description}
                       </p>
-                      <span style={{ fontSize: '0.7rem', color: '#64748B' }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
                         {tx.category?.name || 'Category'} &bull; {formatDate(tx.date)}
                       </span>
                     </div>
@@ -467,64 +864,6 @@ const Dashboard = () => {
           )}
         </Card>
       </div>
-
-      {/* 6. Personalized Saving Tips Carousel / Cards */}
-      {savingTips.length > 0 && (
-        <Card style={{ border: '1px solid rgba(214, 179, 106, 0.25)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles className="w-5 h-5 text-[#D6B36A]" />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Personalized Saving Tips</h3>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/tips')}>
-              View All <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-            {savingTips.slice(0, 3).map((tip) => (
-              <div
-                key={tip._id}
-                style={{
-                  background: '#0D1320',
-                  border: tip.isPinned ? '1px solid #D6B36A' : '1px solid rgba(255, 255, 255, 0.06)',
-                  borderRadius: '12px',
-                  padding: '1rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <span className={tip.isPinned ? 'badge-gold' : 'badge-soft'}>
-                    {tip.isPinned ? 'Pinned Advice' : 'Advisory Tip'}
-                  </span>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <button
-                      onClick={() => handlePinTip(tip._id)}
-                      title={tip.isPinned ? 'Unpin' : 'Pin to top'}
-                      style={{ background: 'transparent', border: 'none', color: tip.isPinned ? '#D6B36A' : '#64748B', cursor: 'pointer', padding: '2px' }}
-                    >
-                      <Pin className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDismissTip(tip._id)}
-                      title="Dismiss"
-                      style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer', padding: '2px' }}
-                    >
-                      <X className="w-3.5 h-3.5 hover:text-white" />
-                    </button>
-                  </div>
-                </div>
-
-                <p style={{ fontSize: '0.85rem', color: '#F8FAFC', lineHeight: 1.4, margin: '0.5rem 0' }}>
-                  {tip.tipText}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
     </div>
   );
 };

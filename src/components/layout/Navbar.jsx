@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Menu, Bell, Plus, User, ExternalLink } from 'lucide-react';
+import { Menu, Bell, Plus, User, ExternalLink, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import notificationService from '../../services/notificationService';
 import Button from '../common/Button';
+import ThemeToggle from '../common/ThemeToggle';
 
 const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [recentNotifs, setRecentNotifs] = useState([]);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
 
   useEffect(() => {
     const fetchNotificationBadge = async () => {
@@ -42,9 +51,9 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
     <header
       style={{
         height: '70px',
-        backgroundColor: '#FFFFFF',
-        borderBottom: '1px solid #E2E8F0',
-        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+        backgroundColor: 'var(--header-bg)',
+        borderBottom: '1px solid var(--header-border)',
+        boxShadow: 'var(--shadow-sm)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -80,16 +89,16 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
         </button>
 
         <div>
-          <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
-            {getGreeting()}, <span style={{ color: '#2563EB' }}>{user?.fullName?.split(' ')[0] || 'Student'}</span>
+          <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            {getGreeting()}, <span style={{ color: '#00E699' }}>{user?.fullName?.split(' ')[0] || 'Student'}</span>
           </h1>
-          <p style={{ fontSize: '0.75rem', color: '#64748B', margin: 0, fontWeight: 500 }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', margin: 0, fontWeight: 500 }}>
             Smart Spending &bull; {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
           </p>
         </div>
       </div>
 
-      {/* Right: Quick Actions & Notification Bell */}
+      {/* Right: Quick Actions, Theme Toggle, Notification Bell, Profile & Logout */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         {onQuickAddClick && (
           <Button
@@ -103,17 +112,21 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
           </Button>
         )}
 
+        {/* Theme Switcher Toggle */}
+        <ThemeToggle />
+
         {/* Notifications Dropdown */}
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => setShowNotifMenu(!showNotifMenu)}
+            aria-label="View notifications"
             style={{
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              backgroundColor: '#F8FAFC',
-              border: '1px solid #E2E8F0',
-              color: unreadCount > 0 ? '#2563EB' : '#64748B',
+              backgroundColor: 'var(--bg-secondary)',
+              border: '1px solid var(--border)',
+              color: unreadCount > 0 ? '#00E699' : 'var(--text-dim)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -155,29 +168,30 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
                 top: '48px',
                 right: 0,
                 width: '320px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E2E8F0',
+                backgroundColor: 'var(--bg-card-elevated)',
+                border: '1px solid var(--border)',
                 borderRadius: '12px',
                 padding: '1rem',
-                boxShadow: '0 15px 35px rgba(15, 23, 42, 0.12)',
-                zIndex: 50
+                boxShadow: 'var(--shadow-lg)',
+                zIndex: 50,
+                backdropFilter: 'blur(16px)'
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                   Notifications ({unreadCount})
                 </span>
                 <Link
                   to="/notifications"
                   onClick={() => setShowNotifMenu(false)}
-                  style={{ fontSize: '0.75rem', color: '#2563EB', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}
+                  style={{ fontSize: '0.75rem', color: '#00E699', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}
                 >
                   View All <ExternalLink className="w-3 h-3" />
                 </Link>
               </div>
 
               {recentNotifs.length === 0 ? (
-                <p style={{ fontSize: '0.8rem', color: '#64748B', textAlign: 'center', margin: '1rem 0' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', textAlign: 'center', margin: '1rem 0' }}>
                   No recent notifications
                 </p>
               ) : (
@@ -187,16 +201,15 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
                       key={n._id}
                       style={{
                         padding: '0.5rem 0.65rem',
-                        backgroundColor: n.read ? '#F8FAFC' : '#EFF6FF',
-                        border: '1px solid',
-                        borderColor: n.read ? '#E2E8F0' : '#BFDBFE',
+                        backgroundColor: 'var(--bg-secondary)',
+                        border: '1px solid var(--border)',
                         borderRadius: '8px'
                       }}
                     >
-                      <p style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0F172A', margin: 0 }}>
+                      <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
                         {n.title}
                       </p>
-                      <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '2px 0 0 0', lineHeight: 1.3 }}>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', margin: '2px 0 0 0', lineHeight: 1.3 }}>
                         {n.message}
                       </p>
                     </div>
@@ -210,6 +223,7 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
         {/* Profile Link */}
         <Link
           to="/profile"
+          title="Student Profile"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -222,9 +236,9 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              backgroundColor: '#EFF6FF',
-              border: '1px solid #BFDBFE',
-              color: '#2563EB',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              color: '#00E699',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -235,6 +249,28 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
             {user?.fullName ? user.fullName.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
           </div>
         </Link>
+
+        {/* Header Logout Button */}
+        <button
+          onClick={handleLogout}
+          title="Logout of CampusCoin"
+          aria-label="Logout"
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '10px',
+            background: 'rgba(239, 68, 68, 0.12)',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            color: '#EF4444',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s'
+          }}
+        >
+          <LogOut size={16} />
+        </button>
       </div>
     </header>
   );

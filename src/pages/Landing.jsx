@@ -14,21 +14,23 @@ import {
   Wallet,
   BookOpen,
   Coffee,
-  Bus
+  Bus,
+  Compass
 } from 'lucide-react';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
+import ThemeToggle from '../components/common/ThemeToggle';
 
 const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC', color: '#0F172A', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden' }}>
       {/* 1. Header / Navbar */}
       <header
         style={{
-          borderBottom: '1px solid #E2E8F0',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          borderBottom: '1px solid var(--border)',
+          backgroundColor: 'var(--header-bg)',
           backdropFilter: 'blur(16px)',
           position: 'sticky',
           top: 0,
@@ -37,46 +39,59 @@ const Landing = () => {
       >
         <div className="luxury-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '75px' }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
             <div
               style={{
                 width: '42px',
                 height: '42px',
                 borderRadius: '12px',
-                background: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
+                background: 'linear-gradient(135deg, #10B981 0%, #06B6D4 100%)',
                 color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)'
+                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)'
               }}
             >
               <Coins className="w-5 h-5 font-bold" />
             </div>
             <div>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#0F172A' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
                 Campus Coin
               </span>
-              <span style={{ display: 'block', fontSize: '0.7rem', color: '#2563EB', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              <span style={{ display: 'block', fontSize: '0.7rem', color: '#00E699', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 Smart Spending
               </span>
             </div>
           </div>
 
           {/* Nav Links & CTA */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <Link
+              to="/sitemap"
+              style={{
+                fontSize: '0.88rem',
+                color: 'var(--text-dim)',
+                textDecoration: 'none',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                padding: '0.4rem 0.75rem'
+              }}
+            >
+              <Compass size={15} /> Sitemap
+            </Link>
+            <ThemeToggle />
             <Link
               to="/login"
               style={{
                 fontSize: '0.9rem',
-                color: '#334155',
+                color: 'var(--text-primary)',
                 textDecoration: 'none',
                 fontWeight: 600,
-                padding: '0.5rem 1rem',
-                transition: 'color 0.2s'
+                padding: '0.5rem 0.85rem'
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#2563EB')}
-              onMouseLeave={(e) => (e.target.style.color = '#334155')}
             >
               Sign In
             </Link>
@@ -431,6 +446,7 @@ const Landing = () => {
             </div>
 
             <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem', color: '#94A3B8' }}>
+              <Link to="/sitemap" style={{ color: '#00E699', textDecoration: 'none', fontWeight: 600 }}>Interactive Sitemap</Link>
               <Link to="/login" style={{ color: '#CBD5E1', textDecoration: 'none' }}>Login</Link>
               <Link to="/register" style={{ color: '#CBD5E1', textDecoration: 'none' }}>Register</Link>
               <Link to="/admin/login" style={{ color: '#94A3B8', textDecoration: 'none' }}>Admin Portal</Link>

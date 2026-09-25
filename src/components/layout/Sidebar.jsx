@@ -6,6 +6,7 @@ import {
   Receipt,
   PiggyBank,
   PieChart,
+  Bot,
   Lightbulb,
   Sparkles,
   Tag,
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { name: 'Transactions', path: '/transactions', icon: Receipt },
   { name: 'Budgets', path: '/budgets', icon: PiggyBank },
   { name: 'Reports', path: '/reports', icon: PieChart },
+  { name: 'AI Assistant', path: '/ai-assistant', icon: Bot },
   { name: 'Insights', path: '/insights', icon: Lightbulb },
   { name: 'Saving Tips', path: '/tips', icon: Sparkles },
   { name: 'Categories', path: '/categories', icon: Tag },
@@ -50,7 +52,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
         flexDirection: 'column',
         height: '100%',
         padding: '1.5rem 1rem',
-        backgroundColor: '#0A1128',
+        backgroundColor: '#161B22',
         borderRight: '1px solid rgba(255, 255, 255, 0.08)',
         boxSizing: 'border-box'
       }}
@@ -71,12 +73,12 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               width: '40px',
               height: '40px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
+              background: 'linear-gradient(135deg, #10B981 0%, #06B6D4 100%)',
               color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 15px rgba(37, 99, 235, 0.35)'
+              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.35)'
             }}
           >
             <Coins size={20} />
@@ -96,7 +98,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             <span
               style={{
                 fontSize: '0.7rem',
-                color: '#38BDF8',
+                color: '#00E699',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'

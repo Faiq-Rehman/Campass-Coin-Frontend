@@ -1,40 +1,85 @@
-:root {
-  /* Campus Coin Luxury Fintech Color System */
-  /* Primary: Deep Navy / Midnight Blue */
-  --navy-darkest: #060D1E;
-  --navy-dark: #0A1128;
-  --navy-primary: #0F172A;
-  --navy-surface: #1E293B;
-  --navy-muted: #334155;
+:root, [data-theme="dark"] {
+  /* Campus Coin Dark Mode (Default) */
+  --bg-primary: #0D1117;
+  --bg-secondary: #161B22;
+  --bg-surface: #161B22;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-card-elevated: #161B22;
+  --bg-glass: rgba(22, 27, 34, 0.85);
 
-  /* Secondary: Royal Blue / Electric Blue */
-  --blue-primary: #2563EB;
-  --blue-dark: #1D4ED8;
-  --blue-light: #3B82F6;
-  --blue-subtle: #EFF6FF;
-  --blue-glow: rgba(37, 99, 235, 0.22);
+  --text-primary: #F0F6FC;
+  --text-secondary: #C9D1D9;
+  --text-dim: #8B949E;
+  --text-muted: #6E7681;
 
-  /* Accent: Soft Cyan / Ice Blue */
-  --cyan-primary: #0EA5E9;
-  --cyan-dark: #0284C7;
-  --cyan-light: #38BDF8;
-  --cyan-subtle: #F0F9FF;
-  --cyan-glow: rgba(14, 165, 233, 0.20);
+  --accent-emerald: #10B981;
+  --accent-emerald-bright: #00E699;
+  --accent-cyan: #06B6D4;
+  --accent-cyan-bright: #38BDF8;
 
-  /* Backgrounds: Very Light Cool White & Subtle Blue-Gray */
+  --border: rgba(255, 255, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(16, 185, 129, 0.35);
+  --border-cyan: rgba(6, 182, 212, 0.35);
+
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --input-border: rgba(255, 255, 255, 0.14);
+  --header-bg: rgba(22, 27, 34, 0.94);
+  --header-border: rgba(255, 255, 255, 0.08);
+
+  --success: #10B981;
+  --success-subtle: rgba(16, 185, 129, 0.15);
+  --warning: #F59E0B;
+  --warning-subtle: rgba(245, 158, 11, 0.15);
+  --danger: #EF4444;
+  --danger-subtle: rgba(239, 68, 68, 0.15);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+
+  --font-heading: 'Outfit', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] {
+  /* Campus Coin Light Mode */
   --bg-primary: #F8FAFC;
   --bg-secondary: #F1F5F9;
+  --bg-surface: #FFFFFF;
   --bg-card: #FFFFFF;
   --bg-card-elevated: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-glass: rgba(255, 255, 255, 0.9);
 
-  /* Text: Deep Navy & Charcoal */
   --text-primary: #0F172A;
   --text-secondary: #334155;
   --text-dim: #64748B;
   --text-muted: #94A3B8;
 
-  /* State Alerts */
+  --accent-emerald: #10B981;
+  --accent-emerald-bright: #059669;
+  --accent-cyan: #0284C7;
+  --accent-cyan-bright: #0EA5E9;
+
+  --border: #E2E8F0;
+  --border-subtle: #F1F5F9;
+  --border-accent: rgba(16, 185, 129, 0.25);
+  --border-cyan: rgba(14, 165, 233, 0.3);
+
+  --input-bg: #FFFFFF;
+  --input-border: #CBD5E1;
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-border: #E2E8F0;
+
   --success: #10B981;
   --success-subtle: #ECFDF5;
   --warning: #F59E0B;
@@ -42,33 +87,9 @@
   --danger: #EF4444;
   --danger-subtle: #FEF2F2;
 
-  /* Borders */
-  --border: #E2E8F0;
-  --border-subtle: #F1F5F9;
-  --border-accent: rgba(37, 99, 235, 0.25);
-  --border-cyan: rgba(14, 165, 233, 0.3);
-
-  /* Fonts */
-  --font-heading: 'Outfit', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
-  /* Premium Shadows */
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
-  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-  --shadow-blue: 0 4px 20px rgba(37, 99, 235, 0.22);
-  --shadow-cyan: 0 4px 20px rgba(14, 165, 233, 0.18);
-
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
-
-  /* Transitions */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.09);
 }
 
 /* Base Reset & Typography */
@@ -146,11 +167,14 @@ p, span, label, input, textarea, select {
   border-radius: var(--radius-md);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .luxury-card:hover {
-  border-color: #CBD5E1;
+  border-color: var(--border-accent);
   box-shadow: var(--shadow-md);
 }
 
@@ -159,23 +183,24 @@ p, span, label, input, textarea, select {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  color: var(--text-primary);
 }
 
 .luxury-card-gold, .luxury-card-accent {
-  border: 1px solid rgba(37, 99, 235, 0.3);
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+  border: 1px solid var(--border-accent);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.12);
 }
 
 /* Luxury Fintech Gradients */
 .gold-gradient-text, .primary-gradient-text {
-  background: linear-gradient(135deg, #0F172A 0%, #1D4ED8 50%, #0284C7 100%);
+  background: linear-gradient(135deg, #00E699 0%, #10B981 50%, #06B6D4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
 
 .accent-gradient-text {
-  background: linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%);
+  background: linear-gradient(135deg, #00E699 0%, #06B6D4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -183,7 +208,7 @@ p, span, label, input, textarea, select {
 
 /* Buttons */
 .btn-gold, .btn-primary {
-  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   color: #FFFFFF;
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -193,14 +218,15 @@ p, span, label, input, textarea, select {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
 }
 
 .btn-gold:hover, .btn-primary:hover {
   transform: translateY(-1px);
-  background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.38);
+  background: linear-gradient(135deg, #00E699 0%, #10B981 100%);
+  color: #060D1E;
+  box-shadow: 0 6px 20px rgba(0, 230, 153, 0.4);
 }
 
 .btn-gold:active, .btn-primary:active {
@@ -208,7 +234,7 @@ p, span, label, input, textarea, select {
 }
 
 .btn-outline {
-  background: #FFFFFF;
+  background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border);
   padding: 0.65rem 1.4rem;
@@ -218,14 +244,14 @@ p, span, label, input, textarea, select {
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-sm);
   transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
 }
 
 .btn-outline:hover {
-  background: #F8FAFC;
-  border-color: #94A3B8;
-  color: var(--blue-primary);
+  background: var(--bg-secondary);
+  border-color: var(--accent-emerald);
+  color: var(--accent-emerald-bright);
   transform: translateY(-1px);
 }
 
@@ -244,15 +270,15 @@ p, span, label, input, textarea, select {
 }
 
 .btn-danger:hover {
-  background: #FEE2E2;
+  background: rgba(239, 68, 68, 0.25);
   border-color: var(--danger);
 }
 
 /* Forms & Inputs */
 .luxury-input, .luxury-select, .luxury-textarea {
   width: 100%;
-  background: #FFFFFF;
-  border: 1px solid #CBD5E1;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   color: var(--text-primary);
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
@@ -262,8 +288,8 @@ p, span, label, input, textarea, select {
 }
 
 .luxury-input:focus, .luxury-select:focus, .luxury-textarea:focus {
-  border-color: var(--blue-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--accent-emerald);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
 .luxury-input::placeholder, .luxury-textarea::placeholder {
