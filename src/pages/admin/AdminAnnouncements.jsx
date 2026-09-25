@@ -148,7 +148,7 @@ const AdminAnnouncements = () => {
       {/* 1. Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Campus Announcements
           </h1>
           <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
@@ -212,7 +212,7 @@ const AdminAnnouncements = () => {
 
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                       {item.title}
                     </h3>
                     <Badge variant={item.type === 'warning' ? 'danger' : item.type === 'tip_template' ? 'gold' : 'soft'}>
@@ -413,7 +413,7 @@ const AdminAnnouncements = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <p style={{ color: '#CBD5E1', fontSize: '0.95rem', margin: 0 }}>
-            Are you sure you want to delete <strong style={{ color: '#F8FAFC' }}>"{itemToDelete?.title}"</strong>?
+            Are you sure you want to delete <strong style={{ color: 'var(--text-primary)' }}>"{itemToDelete?.title}"</strong>?
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>

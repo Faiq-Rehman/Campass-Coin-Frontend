@@ -56,6 +56,36 @@ const adminService = {
     return response.data;
   },
 
+  resetStudentPassword: async (id, newPassword) => {
+    const response = await api.put(`/admin/users/${id}/password`, { password: newPassword });
+    return response.data;
+  },
+
+  getLogs: async () => {
+    const response = await api.get('/admin/logs');
+    return response.data;
+  },
+
+  getTipTemplates: async () => {
+    const response = await api.get('/admin/tip-templates');
+    return response.data;
+  },
+
+  createTipTemplate: async (templateData) => {
+    const response = await api.post('/admin/tip-templates', templateData);
+    return response.data;
+  },
+
+  updateTipTemplate: async (id, templateData) => {
+    const response = await api.put(`/admin/tip-templates/${id}`, templateData);
+    return response.data;
+  },
+
+  deleteTipTemplate: async (id) => {
+    const response = await api.delete(`/admin/tip-templates/${id}`);
+    return response.data;
+  },
+
   getAnnouncements: async () => {
     const response = await api.get('/admin/announcements');
     return response.data;

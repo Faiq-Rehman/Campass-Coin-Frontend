@@ -1,31 +1,42 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const ThemeContext = createContext(null);
+const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('campus_coin_theme');
-    return saved === 'light' ? 'light' : 'dark'; // Dark is default
+    try {
+      const savedTheme = localStorage.getItem('campuscoin-theme');
+      return savedTheme || 'dark'; // Dark mode is default
+    } catch {
+      return 'dark';
+    }
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
+      document.body.classList.add('dark');
     } else {
-      document.documentElement.classList.add('light');
       document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
     }
-    localStorage.setItem('campus_coin_theme', theme);
+    try {
+      localStorage.setItem('campuscoin-theme', theme);
+    } catch {
+      // Storage unavailable fallback
+    }
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+  const isDark = theme === 'dark';
+
   return (
-    <ThemeContext.Provider value={{ theme, isDark: theme === 'dark', toggleTheme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, isDark }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -38,3 +49,5 @@ export const useTheme = () => {
   }
   return context;
 };
+
+export default ThemeContext;

@@ -158,7 +158,7 @@ const AdminCategories = () => {
       {/* 1. Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             System Categories
           </h1>
           <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
@@ -261,7 +261,7 @@ const AdminCategories = () => {
                           backgroundColor: c.color || '#6366F1'
                         }}
                       />
-                      <span style={{ fontWeight: 600, color: '#F8FAFC' }}>{c.name}</span>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{c.name}</span>
                     </div>
                   </td>
 
@@ -442,7 +442,7 @@ const AdminCategories = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <p style={{ color: '#CBD5E1', fontSize: '0.95rem', margin: 0 }}>
-            Are you sure you want to remove <strong style={{ color: '#F8FAFC' }}>"{catToDelete?.name}"</strong>?
+            Are you sure you want to remove <strong style={{ color: 'var(--text-primary)' }}>"{catToDelete?.name}"</strong>?
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>

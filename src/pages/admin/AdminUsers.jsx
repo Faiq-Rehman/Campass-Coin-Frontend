@@ -11,7 +11,8 @@ import {
   UserX,
   Mail,
   Calendar,
-  GraduationCap
+  GraduationCap,
+  KeyRound
 } from 'lucide-react';
 import adminService from '../../services/adminService';
 import { useToast } from '../../context/ToastContext';
@@ -42,6 +43,12 @@ const AdminUsers = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Password Reset Modal
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [userToResetPassword, setUserToResetPassword] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
 
   const fetchUsers = async (page = pagination.page) => {
     try {
@@ -123,11 +130,35 @@ const AdminUsers = () => {
     }
   };
 
+  // Reset Student Password
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!newPassword || newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      setResetLoading(true);
+      const res = await adminService.resetStudentPassword(userToResetPassword._id, newPassword);
+      if (res.success) {
+        toast.success(`Password reset for ${userToResetPassword.fullName}`);
+        setPasswordModalOpen(false);
+        setUserToResetPassword(null);
+        setNewPassword('');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to reset student password');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', paddingBottom: '3rem' }}>
       {/* 1. Header */}
       <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
           Student Directory
         </h1>
         <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
@@ -197,15 +228,15 @@ const AdminUsers = () => {
                 <tr key={u._id}>
                   {/* Name & Email */}
                   <td>
-                    <div style={{ fontWeight: 600, color: '#F8FAFC' }}>{u.fullName}</div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{u.fullName}</div>
                     <div style={{ fontSize: '0.78rem', color: '#94A3B8' }}>{u.email}</div>
                   </td>
 
                   {/* Academic Year */}
-                  <td style={{ color: '#CBD5E1' }}>{u.academicYear || '1st Year'}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{u.academicYear || '1st Year'}</td>
 
                   {/* Allowance */}
-                  <td style={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                     {formatCurrency(u.monthlyAllowance || 0)}
                   </td>
 
@@ -239,6 +270,18 @@ const AdminUsers = () => {
                         style={{ color: u.status === 'active' ? '#FBBF24' : '#34D399' }}
                       >
                         {u.status === 'active' ? <UserX size={15} /> : <UserCheck size={15} />}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setUserToResetPassword(u);
+                          setPasswordModalOpen(true);
+                        }}
+                        title="Reset Student Password"
+                        className="icon-action-btn"
+                        style={{ color: '#06B6D4' }}
+                      >
+                        <KeyRound size={15} />
                       </button>
 
                       <button
@@ -300,12 +343,12 @@ const AdminUsers = () => {
           </div>
         ) : selectedUserDetail ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderRadius: '12px', background: '#0D1320', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(167, 139, 250, 0.2)', color: '#A78BFA', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 800 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderRadius: '12px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 800 }}>
                 {selectedUserDetail.user?.fullName?.charAt(0) || 'S'}
               </div>
               <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   {selectedUserDetail.user?.fullName}
                 </h3>
                 <span style={{ fontSize: '0.85rem', color: '#94A3B8' }}>
@@ -315,27 +358,27 @@ const AdminUsers = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-              <div style={{ padding: '0.85rem', borderRadius: '10px', background: '#0D1320' }}>
+              <div style={{ padding: '0.85rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Transactions Recorded</span>
-                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#D6B36A' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#06B6D4' }}>
                   {selectedUserDetail.stats?.transactionCount || 0}
                 </div>
               </div>
-              <div style={{ padding: '0.85rem', borderRadius: '10px', background: '#0D1320' }}>
+              <div style={{ padding: '0.85rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Active Budgets</span>
-                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#34D399' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#10B981' }}>
                   {selectedUserDetail.stats?.budgetCount || 0}
                 </div>
               </div>
-              <div style={{ padding: '0.85rem', borderRadius: '10px', background: '#0D1320' }}>
+              <div style={{ padding: '0.85rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Monthly Allowance</span>
-                <div style={{ fontSize: '1.1rem', fontWeight: 600, color: '#F8FAFC' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {formatCurrency(selectedUserDetail.user?.monthlyAllowance || 0)}
                 </div>
               </div>
-              <div style={{ padding: '0.85rem', borderRadius: '10px', background: '#0D1320' }}>
+              <div style={{ padding: '0.85rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Savings Goal</span>
-                <div style={{ fontSize: '1.1rem', fontWeight: 600, color: '#F8FAFC' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {formatCurrency(selectedUserDetail.user?.savingsGoal || 0)}
                 </div>
               </div>
@@ -358,8 +401,8 @@ const AdminUsers = () => {
         subtitle="Irreversible administrator action"
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <p style={{ color: '#CBD5E1', fontSize: '0.95rem', margin: 0 }}>
-            Are you sure you want to delete <strong style={{ color: '#F8FAFC' }}>"{userToDelete?.fullName}"</strong>? All their logged transactions, monthly budgets, and notifications will be permanently removed.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
+            Are you sure you want to delete <strong style={{ color: 'var(--text-primary)' }}>"{userToDelete?.fullName}"</strong>? All their logged transactions, monthly budgets, and notifications will be permanently removed.
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
@@ -371,6 +414,66 @@ const AdminUsers = () => {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* 6. Password Reset Modal */}
+      <Modal
+        isOpen={passwordModalOpen}
+        onClose={() => {
+          setPasswordModalOpen(false);
+          setUserToResetPassword(null);
+          setNewPassword('');
+        }}
+        title="Reset Student Password"
+        subtitle={`Set a new temporary or permanent password for ${userToResetPassword?.fullName || 'student'}`}
+      >
+        <form onSubmit={handleResetPasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#94A3B8', marginBottom: '0.5rem' }}>
+              Student Email
+            </label>
+            <input
+              type="text"
+              readOnly
+              value={userToResetPassword?.email || ''}
+              className="luxury-input"
+              style={{ opacity: 0.7, cursor: 'not-allowed' }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#94A3B8', marginBottom: '0.5rem' }}>
+              New Password (minimum 6 characters)
+            </label>
+            <input
+              type="password"
+              placeholder="Enter new student password..."
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="luxury-input"
+              required
+              minLength={6}
+              autoFocus
+            />
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setPasswordModalOpen(false);
+                setUserToResetPassword(null);
+                setNewPassword('');
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={resetLoading}>
+              Save New Password
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );

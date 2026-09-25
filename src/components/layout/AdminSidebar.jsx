@@ -5,6 +5,8 @@ import {
   LayoutDashboard,
   Users,
   Tag,
+  Lightbulb,
+  FileText,
   Megaphone,
   BarChart3,
   LogOut,
@@ -15,8 +17,10 @@ import { useToast } from '../../context/ToastContext';
 
 const ADMIN_NAV = [
   { name: 'Admin Overview', path: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'Students', path: '/admin/users', icon: Users },
+  { name: 'Students', path: '/admin/students', icon: Users },
   { name: 'System Categories', path: '/admin/categories', icon: Tag },
+  { name: 'Tip Templates', path: '/admin/tips', icon: Lightbulb },
+  { name: 'Audit Logs', path: '/admin/logs', icon: FileText },
   { name: 'Announcements', path: '/admin/announcements', icon: Megaphone },
   { name: 'Platform Stats', path: '/admin/statistics', icon: BarChart3 }
 ];

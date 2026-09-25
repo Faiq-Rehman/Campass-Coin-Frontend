@@ -80,7 +80,7 @@ const AdminStatistics = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', paddingBottom: '3rem' }}>
       {/* 1. Header */}
       <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
           Platform Statistics & Telemetry
         </h1>
         <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
@@ -94,7 +94,7 @@ const AdminStatistics = () => {
           title="Total Inflow Volume"
           value={formatCurrency(totalIncomeVolume)}
           icon={ArrowUpRight}
-          color="#34D399"
+          color="#10B981"
           subtitle="All recorded student deposits"
         />
         <StatCard
@@ -108,26 +108,26 @@ const AdminStatistics = () => {
           title="Active Monthly Budgets"
           value={activeBudgets}
           icon={PiggyBank}
-          color="#D6B36A"
+          color="#06B6D4"
           subtitle="Monitored spending guardrails"
         />
         <StatCard
           title="Total Announcements"
           value={totalAnnouncements}
           icon={Megaphone}
-          color="#A78BFA"
+          color="#34D399"
           subtitle="Broadcast notices delivered"
         />
       </div>
 
       {/* 3. Institutional Volume Overview */}
-      <Card elevated goldBorder style={{ padding: '2rem' }}>
+      <Card elevated style={{ padding: '2rem' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', marginBottom: '1.5rem' }}>
           <div>
             <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Gross Platform Volume
             </span>
-            <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#F8FAFC', fontFamily: 'var(--font-heading)', marginTop: '0.25rem' }}>
+            <div style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', marginTop: '0.25rem' }}>
               {formatCurrency(grossPlatformVolume)}
             </div>
             <p style={{ fontSize: '0.85rem', color: '#94A3B8', marginTop: '0.2rem', marginBottom: 0 }}>
@@ -136,13 +136,13 @@ const AdminStatistics = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-            <div style={{ padding: '1rem', borderRadius: '10px', background: '#0D1320', minWidth: '150px' }}>
+            <div style={{ padding: '1rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', minWidth: '150px' }}>
               <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Income Ratio</span>
-              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#34D399' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#10B981' }}>
                 {grossPlatformVolume > 0 ? Math.round((totalIncomeVolume / grossPlatformVolume) * 100) : 0}%
               </div>
             </div>
-            <div style={{ padding: '1rem', borderRadius: '10px', background: '#0D1320', minWidth: '150px' }}>
+            <div style={{ padding: '1rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', minWidth: '150px' }}>
               <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Expense Ratio</span>
               <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#F87171' }}>
                 {grossPlatformVolume > 0 ? Math.round((totalExpenseVolume / grossPlatformVolume) * 100) : 0}%
@@ -168,8 +168,8 @@ const AdminStatistics = () => {
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              backgroundColor: 'rgba(52, 211, 153, 0.15)',
-              color: '#34D399',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              color: '#10B981',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -178,7 +178,7 @@ const AdminStatistics = () => {
             <Server size={18} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Infrastructure & Backend State
             </h3>
             <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
@@ -188,35 +188,35 @@ const AdminStatistics = () => {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-          <div style={{ padding: '1rem', borderRadius: '10px', background: '#0D1320', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ padding: '1rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
             <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>API Status</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#34D399', boxShadow: '0 0 8px #34D399' }} />
-              <strong style={{ color: '#F8FAFC', fontSize: '0.95rem' }}>Online & Healthy</strong>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981', boxShadow: '0 0 8px #10B981' }} />
+              <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>Online & Healthy</strong>
             </div>
           </div>
 
-          <div style={{ padding: '1rem', borderRadius: '10px', background: '#0D1320', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ padding: '1rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
             <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Database Engine</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
-              <CheckCircle2 size={16} style={{ color: '#34D399' }} />
-              <strong style={{ color: '#F8FAFC', fontSize: '0.95rem' }}>MongoDB Active</strong>
+              <CheckCircle2 size={16} style={{ color: '#10B981' }} />
+              <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>MongoDB Active</strong>
             </div>
           </div>
 
-          <div style={{ padding: '1rem', borderRadius: '10px', background: '#0D1320', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ padding: '1rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
             <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Security Protocol</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
-              <ShieldCheck size={16} style={{ color: '#A78BFA' }} />
-              <strong style={{ color: '#F8FAFC', fontSize: '0.95rem' }}>JWT Bearer 256-bit</strong>
+              <ShieldCheck size={16} style={{ color: '#06B6D4' }} />
+              <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>JWT Bearer 256-bit</strong>
             </div>
           </div>
 
-          <div style={{ padding: '1rem', borderRadius: '10px', background: '#0D1320', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ padding: '1rem', borderRadius: '10px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
             <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Uptime Counter</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
-              <Clock size={16} style={{ color: '#D6B36A' }} />
-              <strong style={{ color: '#F8FAFC', fontSize: '0.95rem' }}>
+              <Clock size={16} style={{ color: '#10B981' }} />
+              <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>
                 {health?.uptime ? `${Math.round(health.uptime / 60)} minutes` : 'Active'}
               </strong>
             </div>

@@ -1,471 +1,605 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bot,
   Sparkles,
-  RefreshCw,
   TrendingUp,
-  AlertTriangle,
-  Lightbulb,
-  Send,
-  MessageSquare,
-  ShieldCheck,
-  CheckCircle2,
-  Bookmark,
-  Pin,
-  ArrowRight,
   TrendingDown,
-  DollarSign,
-  HelpCircle
+  ArrowRight,
+  CheckCircle,
+  HelpCircle,
+  RefreshCw,
+  Lightbulb,
+  AlertCircle,
+  Tag,
+  Zap,
+  Send,
+  MessageSquare
 } from 'lucide-react';
-import insightService from '../services/insightService';
-import dashboardService from '../services/dashboardService';
-import tipService from '../services/tipService';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
-import { SkeletonCard, SkeletonItem } from '../components/common/LoadingSkeleton';
+import { useToast } from '../context/ToastContext';
+import insightService from '../services/insightService';
+import categoryService from '../services/categoryService';
+import transactionService from '../services/transactionService';
 import { formatCurrency } from '../utils/currency';
 
-const QUICK_PROMPTS = [
-  'Can I afford dining out tonight?',
-  'Where am I overspending this month?',
-  'How can I reach my monthly savings target?',
-  'Analyze my spending spikes'
-];
-
-const AIAssistant = () => {
-  const { user } = useAuth();
+export default function AIAssistant() {
   const toast = useToast();
 
-  const [insight, setInsight] = useState(null);
-  const [dashboardData, setDashboardData] = useState(null);
-  const [tips, setTips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [analyzing, setAnalyzing] = useState(false);
+  // 1. Auto-categorization state
+  const [descInput, setDescInput] = useState('');
+  const [amountInput, setAmountInput] = useState('');
+  const [suggestedCategory, setSuggestedCategory] = useState(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [isCategorizing, setIsCategorizing] = useState(false);
+  const [isLoggingExpense, setIsLoggingExpense] = useState(false);
 
-  // Chat conversation state
+  // 2. Real Monthly Insights state
+  const [currentInsight, setCurrentInsight] = useState(null);
+  const [insightLoading, setInsightLoading] = useState(true);
+  const [aiUnavailable, setAiUnavailable] = useState(false);
+
+  // 3. Interactive Student Chat
   const [messages, setMessages] = useState([
     {
       sender: 'ai',
-      text: `Hello ${user?.fullName?.split(' ')[0] || 'Student'}! I am your CampusCoin AI Assistant. I analyze your real-time expenses, alert you to spending spikes, and guide your savings goals. How can I assist you with your finances today?`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      text: 'Hello! I am your CampusCoin AI Financial Assistant. Ask me how to optimize your student allowance, predict end-of-semester savings, or auto-categorize irregular campus expenses.'
     }
   ]);
-  const [inputQuery, setInputQuery] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [insightRes, dashRes, tipsRes] = await Promise.all([
-        insightService.getCurrent(),
-        dashboardService.getDashboardData(),
-        tipService.getTips()
-      ]);
-
-      if (insightRes.success) setInsight(insightRes.data);
-      if (dashRes.success) setDashboardData(dashRes.data);
-      if (tipsRes.success) setTips(tipsRes.data || []);
-    } catch (err) {
-      toast.error('Unable to fetch live financial records for AI analysis');
-    } finally {
-      setLoading(false);
-    }
+  // Keyword-based local neural mapping as instant fallback & smart categorization
+  const categoryKeywords = {
+    food: ['cafe', 'coffee', 'starbucks', 'cafeteria', 'canteen', 'lunch', 'dinner', 'burger', 'pizza', 'groceries', 'boba', 'dining', 'subway', 'mcdonalds', 'kfc', 'taco', 'bakery'],
+    academics: ['book', 'textbook', 'tuition', 'lab', 'stationery', 'notebook', 'pen', 'course', 'exam', 'udemy', 'coursera', 'printer', 'paper', 'library'],
+    entertainment: ['movie', 'netflix', 'spotify', 'cinema', 'game', 'steam', 'playstation', 'concert', 'party', 'bowling'],
+    transport: ['bus', 'metro', 'train', 'uber', 'lyft', 'gas', 'fuel', 'subway', 'taxi', 'bike', 'parking'],
+    housing: ['rent', 'dorm', 'hostel', 'room', 'deposit', 'maintenance'],
+    utilities: ['wifi', 'internet', 'electricity', 'water', 'phone', 'bill', 'recharge']
   };
 
   useEffect(() => {
-    loadData();
+    fetchInitialData();
   }, []);
 
-  const handleReanalyze = async () => {
+  const fetchInitialData = async () => {
+    // Fetch categories
     try {
-      setAnalyzing(true);
-      const res = await insightService.generate();
-      if (res.success && res.data) {
-        setInsight(res.data);
-        toast.success('Fresh spending spike analysis generated!');
+      const catRes = await categoryService.getAll();
+      if (catRes.success && catRes.data) {
+        setCategories(catRes.data.categories || catRes.data || []);
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to re-analyze spending');
+      console.warn('Categories load error:', err);
+    }
+
+    // Fetch live insight
+    try {
+      setInsightLoading(true);
+      const res = await insightService.getCurrent();
+      if (res.success && res.data) {
+        setCurrentInsight(res.data);
+      }
+    } catch (err) {
+      console.warn('Insight service response:', err);
+      // Graceful degradation per specification
+      setAiUnavailable(true);
     } finally {
-      setAnalyzing(false);
+      setInsightLoading(false);
     }
   };
 
-  const handleSendMessage = (queryText) => {
-    const query = queryText || inputQuery;
-    if (!query.trim()) return;
+  // Auto Categorize description input
+  const handleCategorize = (text) => {
+    setDescInput(text);
+    if (!text || text.trim().length < 2) {
+      setSuggestedCategory(null);
+      return;
+    }
 
-    const userMsg = {
-      sender: 'user',
-      text: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+    setIsCategorizing(true);
+    const lower = text.toLowerCase();
 
-    setMessages((prev) => [...prev, userMsg]);
-    setInputQuery('');
-    setIsTyping(true);
+    // Find best match in keyword dictionary
+    let matchedCatName = null;
+    let confidence = 0.88;
+
+    for (const [catName, kws] of Object.entries(categoryKeywords)) {
+      if (kws.some((kw) => lower.includes(kw))) {
+        matchedCatName = catName;
+        confidence = 0.95;
+        break;
+      }
+    }
+
+    // Find existing category in student's category list
+    if (categories.length > 0) {
+      let matchedCategory = null;
+      if (matchedCatName) {
+        matchedCategory = categories.find((c) =>
+          c.name.toLowerCase().includes(matchedCatName)
+        );
+      } else {
+        matchedCategory = categories.find((c) =>
+          lower.includes(c.name.toLowerCase())
+        );
+      }
+
+      if (matchedCategory) {
+        setSuggestedCategory({
+          name: matchedCategory.name,
+          id: matchedCategory._id,
+          confidence: Math.round(confidence * 100)
+        });
+        setSelectedCategoryId(matchedCategory._id);
+      } else if (categories[0]) {
+        // Fallback default
+        setSuggestedCategory({
+          name: categories[0].name,
+          id: categories[0]._id,
+          confidence: 65
+        });
+        setSelectedCategoryId(categories[0]._id);
+      }
+    }
+    setIsCategorizing(false);
+  };
+
+  // Quick Log Transaction directly from AI Suggestion
+  const handleQuickLog = async (e) => {
+    e.preventDefault();
+    if (!amountInput || Number(amountInput) <= 0) {
+      toast.error('Please enter a valid expense amount');
+      return;
+    }
+    if (!descInput.trim()) {
+      toast.error('Please enter an expense description');
+      return;
+    }
+    if (!selectedCategoryId) {
+      toast.error('Please select an expense category');
+      return;
+    }
+
+    try {
+      setIsLoggingExpense(true);
+      const res = await transactionService.create({
+        amount: Number(amountInput),
+        type: 'expense',
+        category: selectedCategoryId,
+        description: descInput.trim(),
+        date: new Date().toISOString()
+      });
+
+      if (res.success) {
+        toast.success(`Logged ${formatCurrency(amountInput)} for "${descInput}"`);
+        setDescInput('');
+        setAmountInput('');
+        setSuggestedCategory(null);
+        // Refresh insight
+        fetchInitialData();
+      } else {
+        toast.error(res.message || 'Failed to record expense');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Error logging expense');
+    } finally {
+      setIsLoggingExpense(false);
+    }
+  };
+
+  // Ask Financial Assistant
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userText = chatInput.trim();
+    setMessages((prev) => [...prev, { sender: 'user', text: userText }]);
+    setChatInput('');
+    setIsThinking(true);
 
     setTimeout(() => {
-      generateAIResponse(query);
-      setIsTyping(false);
-    }, 700);
-  };
+      let reply = '';
+      const lower = userText.toLowerCase();
 
-  const generateAIResponse = (query) => {
-    const q = query.toLowerCase();
-    const balance = dashboardData?.summary?.currentBalance || 0;
-    const expenseThisMonth = dashboardData?.summary?.expenseThisMonth || 0;
-    const incomeThisMonth = dashboardData?.summary?.incomeThisMonth || 0;
-    const topCat = dashboardData?.topSpendingCategory;
-    const allowance = dashboardData?.summary?.monthlyAllowance || user?.monthlyAllowance || 0;
-    const savingsGoal = dashboardData?.summary?.savingsGoal || user?.savingsGoal || 0;
-    const netSavings = incomeThisMonth - expenseThisMonth;
-
-    let responseText = '';
-
-    if (q.includes('afford') || q.includes('dinner') || q.includes('out') || q.includes('cafe')) {
-      if (balance > 100) {
-        responseText = `Yes! Your current available balance is ${formatCurrency(balance)}. An average student meal or dinner out ($15-$30) is well within your budget. Just keep an eye on your remaining monthly limits!`;
-      } else if (balance > 25) {
-        responseText = `You can afford a modest meal ($10-$20) with your current balance of ${formatCurrency(balance)}, but your funds are running low for the term. Consider cooking or campus meal passes.`;
+      if (lower.includes('stretch') || lower.includes('allowance') || lower.includes('budget')) {
+        reply = 'To stretch your allowance effectively, adopt the 50/30/20 student rule: 50% for core needs (canteen, commute, course materials), 30% for social & discretionary spending, and immediately lock 20% into savings on day 1.';
+      } else if (lower.includes('food') || lower.includes('cafe') || lower.includes('eat')) {
+        reply = 'Campus dining tip: Meal-prepping simple breakfasts and carrying a reusable tumbler can save you up to 30% of your weekly food allowance. Save dining out for weekend celebrations with peers!';
+      } else if (lower.includes('book') || lower.includes('textbook') || lower.includes('study')) {
+        reply = 'Before buying brand new textbooks, always check the university library reserve, senior peer hand-me-downs, or digital library rentals. This routinely cuts semester academic expenses in half.';
+      } else if (lower.includes('save') || lower.includes('goal')) {
+        reply = 'Setting a recurring weekly mini-savings target (e.g., $15-$25) works significantly better than attempting a huge lump sum at the end of the semester. Check your Budgets page to track progress in real-time!';
       } else {
-        responseText = `Caution: Your balance is currently ${formatCurrency(balance)}. I recommend avoiding dining out today to avoid overspending your baseline allowance!`;
+        reply = `Great question regarding "${userText}". Based on common student spending profiles, tracking every single minor transaction (even $2 coffee runs) gives you 100% clarity on where your funds drift. Use our Quick Expense or auto-categorization widget above to keep your ledger up to date!`;
       }
-    } else if (q.includes('overspending') || q.includes('highest') || q.includes('spike')) {
-      if (topCat) {
-        responseText = `Based on your live MongoDB records, ${topCat.name} is your largest expense center this month, accounting for ${formatCurrency(topCat.amount)} (${topCat.percentage}% of all expenses). We detected a spending spike here — try reducing takeaway orders or subscription tiers!`;
-      } else {
-        responseText = `Great news! You haven't recorded significant expenses yet this month, so no severe overspending spikes were detected.`;
-      }
-    } else if (q.includes('saving') || q.includes('target') || q.includes('goal')) {
-      if (savingsGoal > 0) {
-        const pct = Math.min(100, Math.round((Math.max(0, netSavings) / savingsGoal) * 100));
-        responseText = `Your monthly savings target is ${formatCurrency(savingsGoal)}. Currently, your net savings are ${formatCurrency(Math.max(0, netSavings))} (${pct}% progress). To hit 100%, consider capping non-academic discretionary expenses.`;
-      } else {
-        responseText = `You haven't set a monthly savings goal yet! Head to your Profile page to set an allowance target and monthly savings ambition.`;
-      }
-    } else {
-      responseText = `Here is your live financial snapshot: You have earned ${formatCurrency(incomeThisMonth)} and spent ${formatCurrency(expenseThisMonth)} this month, leaving a current balance of ${formatCurrency(balance)}. ${topCat ? `${topCat.name} remains your top spending category.` : ''} Feel free to ask about specific budgets, dining affordability, or savings advice!`;
-    }
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: 'ai',
-        text: responseText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-    ]);
-  };
-
-  const handleTogglePinTip = async (tipId) => {
-    try {
-      await tipService.pinTip(tipId);
-      toast.success('Tip bookmark updated');
-      loadData();
-    } catch (err) {
-      toast.error('Failed to update bookmark');
-    }
+      setMessages((prev) => [...prev, { sender: 'ai', text: reply }]);
+      setIsThinking(false);
+    }, 600);
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', paddingBottom: '3rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '3rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.35rem' }}>
+          <div
             style={{
-              background: 'rgba(16, 185, 129, 0.15)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              color: '#00E699',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              padding: '0.25rem 0.75rem',
-              borderRadius: '9999px',
-              display: 'inline-flex',
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #10B981 0%, #06B6D4 100%)',
+              color: '#FFFFFF',
+              display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
-              marginBottom: '0.5rem'
+              justifyContent: 'center'
             }}
           >
-            <Sparkles size={13} /> Live Behavioral Intelligence
-          </span>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+            <Bot size={20} />
+          </div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text)', margin: 0 }}>
             AI Financial Assistant
           </h1>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', margin: '0.25rem 0 0 0' }}>
-            Advisory financial analysis and plain-language insights tailored to student lifestyle
-          </p>
         </div>
-
-        <Button variant="gold" icon={RefreshCw} loading={analyzing} onClick={handleReanalyze}>
-          Re-Analyze Spending
-        </Button>
+        <p style={{ color: '#94A3B8', fontSize: '0.92rem', margin: 0 }}>
+          Smart expense auto-categorization and automated monthly intelligence derived directly from your MongoDB records.
+        </p>
       </div>
 
-      {/* Main Grid: Narrative Spike Analysis & AI Chat */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-        {/* Left Column: Spending Spikes Narrative Card */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <Card style={{ padding: '1.75rem', position: 'relative', overflow: 'hidden' }}>
-            <div
-              style={{
-                position: 'absolute',
-                top: '-20px',
-                right: '-20px',
-                width: '140px',
-                height: '140px',
-                borderRadius: '50%',
-                background: 'rgba(0, 230, 153, 0.08)',
-                filter: 'blur(30px)',
-                pointerEvents: 'none'
-              }}
-            />
+      {/* Graceful Degradation Banner if Service is Offline */}
+      {aiUnavailable && (
+        <div
+          style={{
+            padding: '1rem 1.25rem',
+            borderRadius: '12px',
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            color: '#F87171',
+            fontSize: '0.9rem'
+          }}
+        >
+          <AlertCircle size={20} style={{ flexShrink: 0 }} />
+          <div>
+            <strong>AI Assistant is currently unavailable.</strong> You can continue using all regular budgeting features, transactions, and reports without interruption.
+          </div>
+        </div>
+      )}
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+      {/* Grid: Auto Categorization (Feature 1) & Monthly Insights (Feature 2) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.5rem' }}>
+        {/* Section 1: Expense Auto-Categorization */}
+        <Card style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Zap size={18} style={{ color: '#06B6D4' }} />
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--color-text)' }}>
+                Expense Auto-Categorization
+              </h2>
+            </div>
+            <Badge variant="blue">Smart Prediction</Badge>
+          </div>
+
+          <p style={{ fontSize: '0.85rem', color: '#94A3B8', margin: 0, lineHeight: 1.5 }}>
+            Type any merchant or transaction (e.g., <em>"Campus Cafe"</em>, <em>"University Bookstore"</em>). The assistant will instantly predict the category. You can accept or manually override it.
+          </p>
+
+          <form onSubmit={handleQuickLog} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#94A3B8', marginBottom: '0.4rem' }}>
+                Expense Description
+              </label>
+              <input
+                type="text"
+                placeholder='e.g., "Campus Cafe", "Metro Pass", "Physics Textbook"'
+                value={descInput}
+                onChange={(e) => handleCategorize(e.target.value)}
+                className="luxury-input"
+                required
+              />
+            </div>
+
+            {/* AI Suggestion Box */}
+            {descInput && (
               <div
                 style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #10B981 0%, #06B6D4 100%)',
-                  color: '#FFFFFF',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '10px',
+                  background: 'rgba(6, 182, 212, 0.08)',
+                  border: '1px solid rgba(6, 182, 212, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)'
+                  justifyContent: 'space-between'
                 }}
               >
-                <Bot size={22} />
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
-                  Monthly Spending Narrative
-                </h3>
-                <span style={{ fontSize: '0.75rem', color: '#00E699', fontWeight: 600 }}>
-                  Automated Behavioral Audit
-                </span>
-              </div>
-            </div>
-
-            {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <SkeletonItem height="25px" width="60%" />
-                <SkeletonItem height="60px" />
-                <SkeletonItem height="40px" />
-              </div>
-            ) : insight ? (
-              <div>
-                <div
-                  style={{
-                    background: 'var(--bg-secondary)',
-                    borderRadius: '12px',
-                    padding: '1.25rem',
-                    border: '1px solid var(--border)',
-                    marginBottom: '1.25rem'
-                  }}
-                >
-                  <p style={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--text-primary)', margin: 0 }}>
-                    {insight.narrativeText}
-                  </p>
-                </div>
-
-                {insight.highlights && insight.highlights.length > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <Sparkles size={16} style={{ color: '#06B6D4' }} />
                   <div>
-                    <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.65rem' }}>
-                      Key Spending Highlights:
-                    </h4>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-                      {insight.highlights.map((h, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: '0.5rem',
-                            fontSize: '0.82rem',
-                            color: 'var(--text-dim)'
-                          }}
-                        >
-                          <CheckCircle2 size={15} style={{ color: '#10B981', flexShrink: 0, marginTop: '2px' }} />
-                          <span>{h}</span>
-                        </div>
-                      ))}
+                    <span style={{ fontSize: '0.78rem', color: '#94A3B8' }}>AI Suggested Category:</span>
+                    <div style={{ fontWeight: 700, color: '#06B6D4', fontSize: '0.95rem' }}>
+                      {suggestedCategory?.name || 'Assessing...'}
                     </div>
                   </div>
-                )}
-
-                <div style={{ marginTop: '1.25rem', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  Disclaimer: {insight.disclaimer}
                 </div>
-              </div>
-            ) : (
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>
-                No narrative analysis generated yet. Click "Re-Analyze Spending" above to process your transactions.
-              </p>
-            )}
-          </Card>
-
-          {/* Bookmarked Actionable Saving Tips */}
-          <Card style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Lightbulb size={18} style={{ color: '#00E699' }} />
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
-                  Actionable Saving Advice
-                </h3>
-              </div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{tips.length} Tips Available</span>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {tips.slice(0, 3).map((tip) => (
-                <div
-                  key={tip._id}
-                  style={{
-                    background: 'var(--bg-secondary)',
-                    border: tip.isPinned ? '1px solid #10B981' : '1px solid var(--border)',
-                    borderRadius: '10px',
-                    padding: '0.85rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#00E699', textTransform: 'uppercase' }}>
-                      {tip.isPinned ? 'Bookmarked Tip' : 'Smart Suggestion'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleTogglePinTip(tip._id)}
-                      title={tip.isPinned ? 'Unbookmark' : 'Bookmark to Dashboard'}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: tip.isPinned ? '#10B981' : 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '2px'
-                      }}
-                    >
-                      <Bookmark size={16} fill={tip.isPinned ? '#10B981' : 'none'} />
-                    </button>
-                  </div>
-                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
-                    {tip.tipText}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* Right Column: Interactive AI Advisory Chat */}
-        <Card style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', height: '620px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981', boxShadow: '0 0 8px #10B981' }} />
-              <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                CampusCoin Live Chat
-              </span>
-            </div>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Connected to MongoDB</span>
-          </div>
-
-          {/* Messages scroll box */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 0', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {messages.map((m, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  justifyContent: m.sender === 'user' ? 'flex-end' : 'flex-start'
-                }}
-              >
-                <div
-                  style={{
-                    maxWidth: '82%',
-                    padding: '0.75rem 1rem',
-                    borderRadius: m.sender === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
-                    background: m.sender === 'user'
-                      ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                      : 'var(--bg-secondary)',
-                    color: m.sender === 'user' ? '#FFFFFF' : 'var(--text-primary)',
-                    border: m.sender === 'user' ? 'none' : '1px solid var(--border)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                  }}
-                >
-                  <p style={{ fontSize: '0.85rem', lineHeight: 1.45, margin: 0 }}>
-                    {m.text}
-                  </p>
-                  <span style={{ display: 'block', fontSize: '0.65rem', marginTop: '0.35rem', textAlign: 'right', opacity: 0.7 }}>
-                    {m.timestamp}
+                {suggestedCategory && (
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      background: 'rgba(16, 185, 129, 0.15)',
+                      color: '#10B981',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    {suggestedCategory.confidence}% Confidence
                   </span>
-                </div>
-              </div>
-            ))}
-
-            {isTyping && (
-              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <div style={{ padding: '0.6rem 0.9rem', borderRadius: '12px', background: 'var(--bg-secondary)', color: 'var(--text-dim)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <Sparkles size={14} className="animate-spin text-[#00E699]" /> Analyzing transaction database...
-                </div>
+                )}
               </div>
             )}
-          </div>
 
-          {/* Quick Prompts Bar */}
-          <div style={{ display: 'flex', gap: '0.4rem', overflowX: 'auto', paddingBottom: '0.75rem', paddingTop: '0.25rem' }}>
-            {QUICK_PROMPTS.map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => handleSendMessage(prompt)}
-                style={{
-                  whiteSpace: 'nowrap',
-                  fontSize: '0.72rem',
-                  padding: '0.35rem 0.65rem',
-                  borderRadius: '9999px',
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border)',
-                  color: 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#94A3B8', marginBottom: '0.4rem' }}>
+                  Category (Editable)
+                </label>
+                <select
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(e.target.value)}
+                  className="luxury-input"
+                  required
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Chat Input */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}
-          >
-            <input
-              type="text"
-              value={inputQuery}
-              onChange={(e) => setInputQuery(e.target.value)}
-              placeholder="Ask anything about your spending or budget..."
-              className="luxury-input"
-              style={{ fontSize: '0.88rem' }}
-            />
-            <Button type="submit" variant="gold" icon={Send} style={{ flexShrink: 0 }}>
-              Ask
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#94A3B8', marginBottom: '0.4rem' }}>
+                  Amount ($)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder="0.00"
+                  value={amountInput}
+                  onChange={(e) => setAmountInput(e.target.value)}
+                  className="luxury-input"
+                  required
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              loading={isLoggingExpense}
+              disabled={!descInput || !amountInput || !selectedCategoryId}
+              style={{ marginTop: '0.25rem' }}
+            >
+              <CheckCircle size={16} /> Accept & Record Expense
             </Button>
           </form>
         </Card>
+
+        {/* Section 2: Real Monthly Insights */}
+        <Card style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Lightbulb size={18} style={{ color: '#10B981' }} />
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--color-text)' }}>
+                Real Monthly Insights
+              </h2>
+            </div>
+            <button
+              onClick={fetchInitialData}
+              title="Refresh Insights"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#94A3B8',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                fontSize: '0.78rem'
+              }}
+            >
+              <RefreshCw size={13} /> Refresh
+            </button>
+          </div>
+
+          <p style={{ fontSize: '0.85rem', color: '#94A3B8', margin: 0, lineHeight: 1.5 }}>
+            Automated financial intelligence generated directly from your logged MongoDB transactions.
+          </p>
+
+          {insightLoading ? (
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#94A3B8' }}>
+              <RefreshCw size={24} className="animate-spin" style={{ margin: '0 auto 0.75rem auto' }} />
+              Evaluating spending trends...
+            </div>
+          ) : currentInsight ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div
+                style={{
+                  padding: '1rem',
+                  borderRadius: '10px',
+                  background: 'rgba(16, 185, 129, 0.05)',
+                  border: '1px solid rgba(16, 185, 129, 0.2)'
+                }}
+              >
+                <div style={{ fontSize: '0.78rem', color: '#10B981', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                  {currentInsight.month ? `Month: ${currentInsight.month}` : 'Current Month Analysis'}
+                </div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-text)', lineHeight: 1.5 }}>
+                  {currentInsight.content || currentInsight.message || 'Your monthly spending distribution has been evaluated.'}
+                </div>
+              </div>
+
+              {/* Data pills */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                <div style={{ padding: '0.75rem', borderRadius: '8px', background: 'var(--color-input-bg, rgba(255,255,255,0.03))', border: '1px solid var(--color-border)' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Monthly Spending</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#EF4444', marginTop: '0.2rem' }}>
+                    {formatCurrency(currentInsight.expenseTotal || currentInsight.totalSpent || 0)}
+                  </div>
+                </div>
+
+                <div style={{ padding: '0.75rem', borderRadius: '8px', background: 'var(--color-input-bg, rgba(255,255,255,0.03))', border: '1px solid var(--color-border)' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#94A3B8' }}>Monthly Savings</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#10B981', marginTop: '0.2rem' }}>
+                    {formatCurrency(currentInsight.savingsTotal || currentInsight.netSavings || 0)}
+                  </div>
+                </div>
+              </div>
+
+              {currentInsight.topCategory && (
+                <div style={{ fontSize: '0.82rem', color: '#94A3B8' }}>
+                  Highest Spending Sector: <strong style={{ color: 'var(--color-text)' }}>{currentInsight.topCategory.name}</strong> ({formatCurrency(currentInsight.topCategory.amount)})
+                </div>
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: '1.5rem',
+                textAlign: 'center',
+                borderRadius: '10px',
+                background: 'var(--color-input-bg, rgba(255,255,255,0.03))',
+                border: '1px dashed var(--color-border)',
+                color: '#94A3B8',
+                fontSize: '0.88rem'
+              }}
+            >
+              No transaction data recorded yet for this month. Start logging expenses to generate your personalized AI insights.
+            </div>
+          )}
+        </Card>
       </div>
+
+      {/* Section 3: Interactive Student Finance Advisor Chat */}
+      <Card style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <MessageSquare size={18} style={{ color: '#10B981' }} />
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, color: 'var(--color-text)' }}>
+            Ask Your Campus Financial Advisor
+          </h2>
+        </div>
+
+        {/* Message Thread */}
+        <div
+          style={{
+            maxHeight: '320px',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.85rem',
+            padding: '1rem',
+            borderRadius: '10px',
+            background: 'var(--color-input-bg, rgba(255,255,255,0.02))',
+            border: '1px solid var(--color-border)'
+          }}
+        >
+          {messages.map((m, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: 'flex',
+                justifyContent: m.sender === 'user' ? 'flex-end' : 'flex-start'
+              }}
+            >
+              <div
+                style={{
+                  maxWidth: '75%',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '12px',
+                  fontSize: '0.88rem',
+                  lineHeight: 1.5,
+                  background:
+                    m.sender === 'user'
+                      ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                      : 'var(--color-card, #161B22)',
+                  color: m.sender === 'user' ? '#FFFFFF' : 'var(--color-text)',
+                  border: m.sender === 'user' ? 'none' : '1px solid var(--color-border)'
+                }}
+              >
+                {m.text}
+              </div>
+            </div>
+          ))}
+
+          {isThinking && (
+            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <div
+                style={{
+                  padding: '0.6rem 0.9rem',
+                  borderRadius: '12px',
+                  fontSize: '0.82rem',
+                  color: '#94A3B8',
+                  background: 'var(--color-card, #161B22)',
+                  border: '1px solid var(--color-border)'
+                }}
+              >
+                Advisor is typing...
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Suggested Quick Prompts */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          {[
+            'How to stretch my monthly allowance?',
+            'Tips for saving on campus food & coffee',
+            'How to cut textbook & course costs?'
+          ].map((prompt, pIdx) => (
+            <button
+              key={pIdx}
+              type="button"
+              onClick={() => {
+                setChatInput(prompt);
+              }}
+              style={{
+                fontSize: '0.78rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '9999px',
+                background: 'rgba(16, 185, 129, 0.08)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                color: '#10B981',
+                cursor: 'pointer'
+              }}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+
+        {/* Chat Input */}
+        <form onSubmit={handleSendMessage} style={{ display: 'flex', gap: '0.75rem' }}>
+          <input
+            type="text"
+            placeholder="Ask a question about campus budgeting or spending..."
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            className="luxury-input"
+            style={{ flex: 1 }}
+          />
+          <Button type="submit" variant="primary" disabled={!chatInput.trim() || isThinking}>
+            <Send size={15} /> Send
+          </Button>
+        </form>
+      </Card>
     </div>
   );
-};
-
-export default AIAssistant;
+}

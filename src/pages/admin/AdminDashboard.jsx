@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   ShieldCheck,
   Users,
@@ -79,10 +78,10 @@ const AdminDashboard = () => {
       {/* 1. Header with Quick Admin Navigation */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'inline-flex', padding: '0.3rem 0.75rem', borderRadius: '999px', background: 'rgba(167, 139, 250, 0.12)', border: '1px solid rgba(167, 139, 250, 0.4)', color: '#A78BFA', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'inline-flex', padding: '0.3rem 0.75rem', borderRadius: '999px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#10B981', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>
             System Administration
           </div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Platform Control Center
           </h1>
           <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
@@ -94,12 +93,12 @@ const AdminDashboard = () => {
           <Button
             variant="outline"
             icon={Users}
-            onClick={() => navigate('/admin/users')}
+            onClick={() => navigate('/admin/students')}
           >
             Manage Students
           </Button>
           <Button
-            variant="gold"
+            variant="primary"
             icon={Megaphone}
             onClick={() => navigate('/admin/announcements')}
           >
@@ -114,15 +113,15 @@ const AdminDashboard = () => {
           title="Total Students"
           value={users?.total || 0}
           icon={Users}
-          color="#A78BFA"
-          subtitle={`${users?.active || 0} active &bull; ${users?.disabled || 0} disabled`}
+          color="#10B981"
+          subtitle={`${users?.active || 0} active • ${users?.disabled || 0} disabled`}
         />
         <StatCard
           title="Total Transactions"
           value={transactions?.total || 0}
           icon={Receipt}
-          color="#D6B36A"
-          subtitle={`${transactions?.income || 0} income &bull; ${transactions?.expense || 0} expense`}
+          color="#06B6D4"
+          subtitle={`${transactions?.income || 0} income • ${transactions?.expense || 0} expense`}
         />
         <StatCard
           title="Active Students"
@@ -143,7 +142,7 @@ const AdminDashboard = () => {
       {/* 3. Monthly Activity Chart */}
       <Card elevated style={{ padding: '1.75rem' }}>
         <div style={{ marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
             Platform Transaction Volume History
           </h3>
           <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '0.2rem', marginBottom: 0 }}>
@@ -155,24 +154,24 @@ const AdminDashboard = () => {
           <div style={{ height: '280px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyActivity}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
                 <XAxis dataKey="_id" stroke="#64748B" fontSize={12} />
                 <YAxis stroke="#64748B" fontSize={12} tickFormatter={(val) => `Rs ${val}`} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111827',
-                    border: '1px solid rgba(167, 139, 250, 0.3)',
-                    borderRadius: '10px'
+                    backgroundColor: 'var(--bg-card)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '10px',
+                    color: 'var(--text-primary)'
                   }}
                   formatter={(val) => [formatCurrency(val), 'Volume']}
                 />
-                <Bar dataKey="totalVolume" fill="#A78BFA" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="totalVolume" fill="#10B981" radius={[4, 4, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
-          </div>
+            </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '2rem', color: '#94A3B8' }}>
-            No platform activity recorded yet.
+          <div style={{ padding: '2.5rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.9rem' }}>
+            No platform activity data logged yet.
           </div>
         )}
       </Card>
@@ -181,7 +180,7 @@ const AdminDashboard = () => {
       <Card elevated style={{ padding: '1.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Top Used Categories
             </h3>
             <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '0.2rem', marginBottom: 0 }}>
@@ -217,7 +216,7 @@ const AdminDashboard = () => {
               <tbody>
                 {topCategories.map((c) => (
                   <tr key={c.categoryId}>
-                    <td style={{ fontWeight: 600, color: '#F8FAFC' }}>
+                    <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                       {c.name}
                     </td>
                     <td>
@@ -225,10 +224,10 @@ const AdminDashboard = () => {
                         {c.type}
                       </Badge>
                     </td>
-                    <td style={{ textAlign: 'center', color: '#CBD5E1' }}>
+                    <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
                       {c.usageCount} entries
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: 700, color: '#F8FAFC' }}>
+                    <td style={{ textAlign: 'right', fontWeight: 700, color: '#10B981' }}>
                       {formatCurrency(c.totalAmount)}
                     </td>
                   </tr>
