@@ -168,7 +168,8 @@ const AdminDashboard = () => {
                 />
                 <Bar dataKey="totalVolume" fill="#10B981" radius={[4, 4, 0, 0]} />
               </BarChart>
-            </div>
+            </ResponsiveContainer>
+          </div>
         ) : (
           <div style={{ padding: '2.5rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.9rem' }}>
             No platform activity data logged yet.
