@@ -8,7 +8,7 @@ const Modal = ({
   title,
   subtitle,
   children,
-  maxWidth = 'max-w-lg'
+  maxWidth = '32rem'
 }) => {
   // Close on Escape key
   useEffect(() => {
@@ -71,14 +71,16 @@ const Modal = ({
             style={{
               position: 'relative',
               width: '100%',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E2E8F0',
+              maxWidth,
+              maxHeight: 'calc(100dvh - 2.5rem)',
+              overflowY: 'auto',
+              backgroundColor: 'var(--bg-card-elevated)',
+              border: '1px solid var(--border)',
               borderRadius: '16px',
               padding: '1.75rem',
-              boxShadow: '0 20px 50px rgba(15, 23, 42, 0.22)',
+              boxShadow: 'var(--shadow-lg)',
               zIndex: 10
             }}
-            className={maxWidth}
           >
             {/* Header */}
             <div
@@ -87,7 +89,7 @@ const Modal = ({
                 alignItems: 'flex-start',
                 justifyContent: 'space-between',
                 marginBottom: '1.25rem',
-                borderBottom: '1px solid #F1F5F9',
+                borderBottom: '1px solid var(--border-subtle)',
                 paddingBottom: '0.85rem'
               }}
             >
@@ -96,7 +98,7 @@ const Modal = ({
                   style={{
                     fontSize: '1.25rem',
                     fontWeight: 700,
-                    color: '#0F172A',
+                    color: 'var(--text-primary)',
                     margin: 0
                   }}
                 >
@@ -106,7 +108,7 @@ const Modal = ({
                   <p
                     style={{
                       fontSize: '0.85rem',
-                      color: '#64748B',
+                      color: 'var(--text-dim)',
                       marginTop: '0.25rem',
                       marginBottom: 0
                     }}
@@ -118,9 +120,9 @@ const Modal = ({
               <button
                 onClick={onClose}
                 style={{
-                  background: '#F1F5F9',
+                  background: 'var(--bg-secondary)',
                   border: 'none',
-                  color: '#64748B',
+                  color: 'var(--text-secondary)',
                   cursor: 'pointer',
                   padding: '6px',
                   borderRadius: '8px',
@@ -130,7 +132,7 @@ const Modal = ({
                   transition: 'background 0.2s, color 0.2s'
                 }}
               >
-                <X className="w-5 h-5 hover:text-[#0F172A]" />
+                <X size={20} />
               </button>
             </div>
 

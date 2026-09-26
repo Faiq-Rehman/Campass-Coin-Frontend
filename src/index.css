@@ -398,6 +398,7 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  color-scheme: dark;
   background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
   background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
   background-size: 6px 6px, 6px 6px;
@@ -406,8 +407,12 @@ select {
 }
 
 .luxury-select option {
-  background: var(--bg-card);
+  background: var(--bg-secondary);
   color: var(--text-primary);
+}
+
+[data-theme='light'] .luxury-select {
+  color-scheme: light;
 }
 
 .input-label {

@@ -22,6 +22,7 @@ import { useToast } from '../context/ToastContext';
 import insightService from '../services/insightService';
 import categoryService from '../services/categoryService';
 import transactionService from '../services/transactionService';
+import aiChatService from '../services/aiChatService';
 import { formatCurrency } from '../utils/currency';
 
 export default function AIAssistant() {
@@ -42,12 +43,7 @@ export default function AIAssistant() {
   const [aiUnavailable, setAiUnavailable] = useState(false);
 
   // 3. Interactive Student Chat
-  const [messages, setMessages] = useState([
-    {
-      sender: 'ai',
-      text: 'Hello! I am your CampusCoin AI Financial Assistant. Ask me how to optimize your student allowance, predict end-of-semester savings, or auto-categorize irregular campus expenses.'
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
 
@@ -192,34 +188,30 @@ export default function AIAssistant() {
   };
 
   // Ask Financial Assistant
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
-
     const userText = chatInput.trim();
+    if (!userText || isThinking) return;
+
+    const history = messages.slice(-12).map((message) => ({
+      role: message.sender === 'ai' ? 'model' : 'user',
+      text: message.text
+    }));
     setMessages((prev) => [...prev, { sender: 'user', text: userText }]);
     setChatInput('');
     setIsThinking(true);
 
-    setTimeout(() => {
-      let reply = '';
-      const lower = userText.toLowerCase();
-
-      if (lower.includes('stretch') || lower.includes('allowance') || lower.includes('budget')) {
-        reply = 'To stretch your allowance effectively, adopt the 50/30/20 student rule: 50% for core needs (canteen, commute, course materials), 30% for social & discretionary spending, and immediately lock 20% into savings on day 1.';
-      } else if (lower.includes('food') || lower.includes('cafe') || lower.includes('eat')) {
-        reply = 'Campus dining tip: Meal-prepping simple breakfasts and carrying a reusable tumbler can save you up to 30% of your weekly food allowance. Save dining out for weekend celebrations with peers!';
-      } else if (lower.includes('book') || lower.includes('textbook') || lower.includes('study')) {
-        reply = 'Before buying brand new textbooks, always check the university library reserve, senior peer hand-me-downs, or digital library rentals. This routinely cuts semester academic expenses in half.';
-      } else if (lower.includes('save') || lower.includes('goal')) {
-        reply = 'Setting a recurring weekly mini-savings target (e.g., $15-$25) works significantly better than attempting a huge lump sum at the end of the semester. Check your Budgets page to track progress in real-time!';
-      } else {
-        reply = `Great question regarding "${userText}". Based on common student spending profiles, tracking every single minor transaction (even $2 coffee runs) gives you 100% clarity on where your funds drift. Use our Quick Expense or auto-categorization widget above to keep your ledger up to date!`;
-      }
-
+    try {
+      const reply = await aiChatService.sendMessage(userText, history);
       setMessages((prev) => [...prev, { sender: 'ai', text: reply }]);
+    } catch (err) {
+      setMessages((prev) => [...prev, {
+        sender: 'ai',
+        text: err.message || 'Gemini could not answer right now. Please try again.'
+      }]);
+    } finally {
       setIsThinking(false);
-    }, 600);
+    }
   };
 
   return (
@@ -539,6 +531,13 @@ export default function AIAssistant() {
             </div>
           ))}
 
+          {messages.length === 0 && !isThinking && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', color: 'var(--text-dim)', fontSize: '0.88rem' }}>
+              <Sparkles size={17} style={{ color: '#10B981', flexShrink: 0 }} />
+              Ask anything. Gemini will answer using your question and the conversation so far.
+            </div>
+          )}
+
           {isThinking && (
             <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
               <div
@@ -593,6 +592,8 @@ export default function AIAssistant() {
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             className="luxury-input"
+            maxLength={4000}
+            required
             style={{ flex: 1 }}
           />
           <Button type="submit" variant="primary" disabled={!chatInput.trim() || isThinking}>

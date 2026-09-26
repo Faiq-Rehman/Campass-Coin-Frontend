@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PiggyBank,
@@ -29,11 +30,14 @@ import { formatCurrency } from '../utils/currency';
 
 const Budgets = () => {
   const toast = useToast();
+  const navigate = useNavigate();
   const currentMonthStr = new Date().toISOString().substring(0, 7);
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonthStr);
   const [budgets, setBudgets] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Modals
@@ -56,13 +60,21 @@ const Budgets = () => {
 
   // Fetch expense categories
   const fetchExpenseCategories = async () => {
+    setCategoriesLoading(true);
+    setCategoriesError(false);
     try {
       const res = await categoryService.getCategories('expense');
       if (res.success && res.data) {
         setCategories(res.data);
+      } else {
+        setCategories([]);
       }
     } catch (err) {
       console.error('Error fetching categories:', err);
+      setCategories([]);
+      setCategoriesError(true);
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -446,15 +458,35 @@ const Budgets = () => {
               className="luxury-select"
               value={newBudgetForm.category}
               onChange={(e) => setNewBudgetForm({ ...newBudgetForm, category: e.target.value })}
+              disabled={categoriesLoading || categoriesError || categories.length === 0}
               required
             >
-              <option value="">Select Expense Category</option>
+              <option value="">
+                {categoriesLoading
+                  ? 'Loading expense categories...'
+                  : categoriesError
+                  ? 'Could not load expense categories'
+                  : categories.length === 0
+                  ? 'No expense categories available'
+                  : 'Select Expense Category'}
+              </option>
               {categories.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
                 </option>
               ))}
             </select>
+            {categoriesError ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginTop: '0.65rem' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>Check your connection and try again.</span>
+                <Button size="sm" variant="outline" onClick={fetchExpenseCategories}>Retry</Button>
+              </div>
+            ) : !categoriesLoading && categories.length === 0 ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.65rem' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>Add an expense category before setting a budget.</span>
+                <Button size="sm" variant="outline" icon={Plus} onClick={() => navigate('/categories')}>Add Category</Button>
+              </div>
+            ) : null}
           </div>
 
           <div>
