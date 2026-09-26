@@ -38,11 +38,19 @@
 
   /* State Alerts */
   --success: #10B981;
+  --success-contrast: #34D399;
   --success-subtle: rgba(16, 185, 129, 0.12);
   --warning: #F59E0B;
   --warning-subtle: rgba(245, 158, 11, 0.12);
+  --warning-contrast: #FBBF24;
   --danger: #EF4444;
+  --danger-contrast: #F87171;
   --danger-subtle: rgba(239, 68, 68, 0.12);
+  --chart-accent: #D6B36A;
+  --feature-cta-bg: linear-gradient(135deg, #161B22 0%, #0D1117 100%);
+  --feature-cta-text: #F8FAFC;
+  --feature-cta-muted: #CBD5E1;
+  --feature-cta-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 
   /* Borders */
   --border: rgba(255, 255, 255, 0.1);
@@ -75,47 +83,55 @@
 
 [data-theme='light'] {
   /* CampusCoin Light Mode */
-  --bg-primary: #F8FAFC;
-  --bg-secondary: #F1F5F9;
+  --bg-primary: #EAF0F5;
+  --bg-secondary: #DEE7F0;
   --bg-card: #FFFFFF;
-  --bg-card-elevated: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.88);
-  --header-bg: rgba(248, 250, 252, 0.88);
+  --bg-card-elevated: #F8FBFE;
+  --bg-glass: rgba(248, 251, 254, 0.94);
+  --header-bg: rgba(234, 240, 245, 0.94);
 
-  --color-bg: #F8FAFC;
+  --color-bg: #EAF0F5;
   --color-card: #FFFFFF;
-  --color-border: #E2E8F0;
-  --color-text: #0F172A;
-  --color-input-bg: #F8FAFC;
+  --color-border: #CBD7E2;
+  --color-text: #14263A;
+  --color-input-bg: #F5F8FB;
 
-  --primary: #10B981;
-  --primary-accent: #059669;
-  --cyan: #06B6D4;
-  --blue-primary: #2563EB;
-  --blue-dark: #1D4ED8;
-  --blue-light: #3B82F6;
-  --blue-subtle: #EFF6FF;
-  --blue-glow: rgba(37, 99, 235, 0.2);
+  --primary: #087F5B;
+  --primary-accent: #066148;
+  --success-contrast: #087F5B;
+  --danger-contrast: #B42318;
+  --cyan: #0B7285;
+  --blue-primary: #1D5D82;
+  --blue-dark: #174B69;
+  --blue-light: #2D789E;
+  --blue-subtle: rgba(29, 93, 130, 0.1);
+  --blue-glow: rgba(29, 93, 130, 0.16);
 
-  --cyan-primary: #0EA5E9;
-  --cyan-dark: #0284C7;
-  --cyan-light: #38BDF8;
-  --cyan-subtle: #F0F9FF;
-  --cyan-glow: rgba(14, 165, 233, 0.15);
+  --cyan-primary: #0B7285;
+  --cyan-dark: #095D6D;
+  --cyan-light: #38A3B8;
+  --cyan-subtle: rgba(11, 114, 133, 0.1);
+  --cyan-glow: rgba(11, 114, 133, 0.15);
 
-  --text-primary: #0F172A;
-  --text-secondary: #334155;
-  --text-dim: #64748B;
-  --text-muted: #94A3B8;
+  --text-primary: #14263A;
+  --text-secondary: #32495E;
+  --text-dim: #53697E;
+  --text-muted: #687D91;
 
-  --border: #E2E8F0;
-  --border-subtle: #F1F5F9;
-  --border-accent: rgba(16, 185, 129, 0.3);
-  --border-cyan: rgba(14, 165, 233, 0.3);
+  --border: #CBD7E2;
+  --border-subtle: #E3EAF0;
+  --border-accent: rgba(8, 127, 91, 0.34);
+  --border-cyan: rgba(11, 114, 133, 0.28);
+  --warning-contrast: #8A4B08;
+  --chart-accent: #93630A;
+  --feature-cta-bg: linear-gradient(135deg, #DCECE7 0%, #DDE8F0 100%);
+  --feature-cta-text: #14263A;
+  --feature-cta-muted: #42566B;
+  --feature-cta-shadow: 0 16px 36px rgba(20, 38, 58, 0.12);
 
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.07);
-  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.09);
+  --shadow-sm: 0 1px 3px rgba(20, 38, 58, 0.08);
+  --shadow-md: 0 5px 18px -3px rgba(20, 38, 58, 0.12);
+  --shadow-lg: 0 14px 36px -5px rgba(20, 38, 58, 0.16);
 }
 
 /* Base Reset & Typography */
@@ -268,6 +284,18 @@ select {
 .btn-gold:active,
 .btn-primary:active {
   transform: translateY(0);
+}
+
+[data-theme='light'] .btn-gold,
+[data-theme='light'] .btn-primary {
+  background: linear-gradient(135deg, #087F5B 0%, #066148 100%);
+  box-shadow: 0 4px 14px rgba(8, 127, 91, 0.24);
+}
+
+[data-theme='light'] .btn-gold:hover,
+[data-theme='light'] .btn-primary:hover {
+  background: linear-gradient(135deg, #066148 0%, #054B39 100%);
+  box-shadow: 0 6px 18px rgba(8, 127, 91, 0.3);
 }
 
 .btn-outline {
@@ -624,7 +652,7 @@ select {
   border-radius: 10px;
   border: 1px solid transparent;
   background: transparent;
-  color: #94A3B8;
+  color: var(--text-dim);
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;
@@ -634,17 +662,17 @@ select {
 
 .sidebar-nav-item:hover,
 .sidebar-nav-item:focus-visible {
-  background: rgba(255, 255, 255, 0.06);
-  color: #F8FAFC;
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border);
   outline: none;
 }
 
 .sidebar-nav-item.active {
-  background: rgba(37, 99, 235, 0.2);
-  border-color: rgba(56, 189, 248, 0.4);
-  color: #38BDF8;
-  box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
+  background: var(--blue-subtle);
+  border-color: var(--border-accent);
+  color: var(--blue-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .mobile-sidebar-overlay {
@@ -781,7 +809,7 @@ select {
 }
 
 .luxury-table th {
-  background: #F8FAFC;
+  background: var(--bg-secondary);
   color: var(--text-dim);
   font-weight: 600;
   font-size: 0.75rem;
@@ -794,7 +822,7 @@ select {
 
 .luxury-table td {
   padding: 1rem 1.1rem;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--border-subtle);
   color: var(--text-primary);
   vertical-align: middle;
 }
@@ -804,7 +832,7 @@ select {
 }
 
 .luxury-table tbody tr:hover {
-  background: #F8FAFC;
+  background: var(--bg-secondary);
 }
 
 .luxury-table tbody tr:last-child td {
@@ -843,17 +871,17 @@ select {
 }
 
 .luxury-tab.active {
-  background: #FFFFFF;
+  background: var(--bg-card);
   color: var(--blue-primary);
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-  border: 1px solid #CBD5E1;
+  border: 1px solid var(--border);
 }
 
 /* Progress Bars */
 .luxury-progress-track {
   width: 100%;
   height: 8px;
-  background: #E2E8F0;
+  background: var(--bg-secondary);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -887,7 +915,7 @@ select {
   height: 32px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: #FFFFFF;
+  background: var(--bg-card);
   color: var(--text-dim);
   display: inline-flex;
   align-items: center;
@@ -897,9 +925,9 @@ select {
 }
 
 .icon-action-btn:hover {
-  background: #F8FAFC;
+  background: var(--bg-secondary);
   color: var(--text-primary);
-  border-color: #CBD5E1;
+  border-color: var(--border);
 }
 
 .icon-action-btn.delete:hover {

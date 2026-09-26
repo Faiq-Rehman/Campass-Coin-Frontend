@@ -115,7 +115,7 @@ const Dashboard = () => {
       <Card style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
         <AlertTriangle className="w-12 h-12 text-[#FBBF24] mx-auto mb-3" />
         <h3 className="text-xl font-bold text-white mb-2">Dashboard Offline</h3>
-        <p className="text-sm text-[#94A3B8] max-w-md mx-auto mb-5">{error}</p>
+        <p style={{ color: 'var(--text-dim)' }}>{error}</p>
         <Button variant="gold" onClick={fetchDashboard}>
           Retry Connection
         </Button>
@@ -201,9 +201,9 @@ const Dashboard = () => {
           }}
         >
           <AlertTriangle className="w-5 h-5 text-[#FBBF24] shrink-0" />
-          <div style={{ flex: 1, fontSize: '0.85rem', color: '#F8FAFC' }}>
+          <div style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
             <strong>Budget Alert:</strong> You have consumed over 80% of your budget for{' '}
-            <span style={{ color: '#FBBF24', fontWeight: 600 }}>
+            <span style={{ color: 'var(--warning-contrast)', fontWeight: 600 }}>
               {budgetWarnings.map((b) => `${b.category} (${b.percentageUsed}%)`).join(', ')}
             </span>.
           </div>
@@ -260,7 +260,7 @@ const Dashboard = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>7-Day Spending Activity</h3>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Daily expense distribution</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '2px 0 0 0' }}>Daily expense distribution</p>
             </div>
             <span className="badge-gold">Daily Realtime</span>
           </div>
@@ -270,24 +270,24 @@ const Dashboard = () => {
               <AreaChart data={spendingTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D6B36A" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#D6B36A" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--chart-accent)" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="var(--chart-accent)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="date" stroke="#64748B" fontSize={11} tickFormatter={(d) => d.slice(5)} />
-                <YAxis stroke="#64748B" fontSize={11} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+                <XAxis dataKey="date" stroke="var(--text-dim)" fontSize={11} tickFormatter={(d) => d.slice(5)} />
+                <YAxis stroke="var(--text-dim)" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111827',
-                    border: '1px solid rgba(214, 179, 106, 0.4)',
+                    backgroundColor: 'var(--bg-card-elevated)',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
-                    color: '#F8FAFC',
+                    color: 'var(--text-primary)',
                     fontSize: '12px'
                   }}
                   formatter={(value) => [formatCurrency(value), 'Spent']}
                 />
-                <Area type="monotone" dataKey="amount" stroke="#D6B36A" strokeWidth={2.5} fillOpacity={1} fill="url(#spendGrad)" />
+                <Area type="monotone" dataKey="amount" stroke="var(--chart-accent)" strokeWidth={2.5} fillOpacity={1} fill="url(#spendGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -352,7 +352,7 @@ const Dashboard = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Active Budgets</h3>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Live consumption monitoring</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '2px 0 0 0' }}>Live consumption monitoring</p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate('/budgets')}>
               Manage <ChevronRight className="w-4 h-4" />
@@ -402,7 +402,7 @@ const Dashboard = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>Recent Activity</h3>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: '2px 0 0 0' }}>Latest student records</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: '2px 0 0 0' }}>Latest student records</p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => navigate('/transactions')}>
               All <ChevronRight className="w-4 h-4" />
@@ -520,7 +520,7 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <p style={{ fontSize: '0.85rem', color: '#F8FAFC', lineHeight: 1.4, margin: '0.5rem 0' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.4, margin: '0.5rem 0' }}>
                   {tip.tipText}
                 </p>
               </div>

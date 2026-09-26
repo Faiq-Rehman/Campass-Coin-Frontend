@@ -81,7 +81,9 @@ const Transactions = () => {
     try {
       const res = await transactionService.getSummary();
       if (res.success && res.data) {
-        setSummary(res.data);
+        const payload = res.data.data ?? res.data;
+        const summaryData = payload.summary ?? payload;
+        setSummary(summaryData);
       }
     } catch (err) {
       console.error('Summary fetch error:', err);
@@ -117,9 +119,10 @@ const Transactions = () => {
 
       const res = await transactionService.getTransactions(params);
       if (res.success && res.data) {
-        setTransactions(res.data.transactions || []);
-        if (res.data.pagination) {
-          setPagination(res.data.pagination);
+        const transactionData = Array.isArray(res.data) ? { transactions: res.data } : res.data;
+        setTransactions(Array.isArray(transactionData.transactions) ? transactionData.transactions : []);
+        if (transactionData.pagination) {
+          setPagination(transactionData.pagination);
         }
       }
     } catch (err) {
@@ -262,10 +265,10 @@ const Transactions = () => {
       {/* 1. Header with CTA Actions */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Transactions
           </h1>
-          <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginTop: '0.25rem', marginBottom: 0 }}>
             Audit and manage your daily campus expenses and income
           </p>
         </div>
@@ -301,23 +304,23 @@ const Transactions = () => {
         <div className="stat-grid">
           <StatCard
             title="Total Inflow"
-            value={formatCurrency(summary.totalIncome || 0)}
+            value={summary.totalIncome == null ? '—' : formatCurrency(summary.totalIncome)}
             icon={ArrowUpRight}
             color="#34D399"
-            subtitle={`${summary.incomeCount || 0} deposits`}
+            subtitle={`${summary.incomeCount ?? '—'} deposits`}
           />
           <StatCard
             title="Total Outflow"
-            value={formatCurrency(summary.totalExpense || 0)}
+            value={summary.totalExpense == null ? '—' : formatCurrency(summary.totalExpense)}
             icon={ArrowDownLeft}
             color="#F87171"
-            subtitle={`${summary.expenseCount || 0} expenses`}
+            subtitle={`${summary.expenseCount ?? '—'} expenses`}
           />
           <StatCard
             title="Net Balance"
-            value={formatCurrency(summary.balance || 0)}
+            value={summary.balance == null ? '—' : formatCurrency(summary.balance)}
             icon={Receipt}
-            color="#D6B36A"
+            color="var(--chart-accent)"
             subtitle="Overall cash standing"
           />
         </div>
@@ -330,7 +333,7 @@ const Transactions = () => {
           <div style={{ flex: '1 1 240px', position: 'relative' }}>
             <Search
               size={18}
-              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }}
+              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }}
             />
             <input
               type="text"
@@ -381,7 +384,7 @@ const Transactions = () => {
               title="Start Date"
               style={{ width: '135px', padding: '0.65rem 0.6rem', fontSize: '0.8rem' }}
             />
-            <span style={{ color: '#64748B', fontSize: '0.8rem' }}>to</span>
+            <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>to</span>
             <input
               type="date"
               className="luxury-input"
@@ -400,10 +403,10 @@ const Transactions = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
-                color: '#94A3B8',
+                color: 'var(--text-secondary)',
                 padding: '0.65rem 0.9rem',
                 fontSize: '0.85rem',
                 cursor: 'pointer'
@@ -454,17 +457,17 @@ const Transactions = () => {
               {transactions.map((tx) => (
                 <tr key={tx._id}>
                   {/* Date */}
-                  <td style={{ color: '#94A3B8', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                  <td style={{ color: 'var(--text-dim)', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
                     {formatDate(tx.date)}
                   </td>
 
                   {/* Description */}
                   <td>
-                    <div style={{ fontWeight: 600, color: '#F8FAFC' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                       {tx.description}
                     </div>
                     {tx.isRecurring && (
-                      <span style={{ fontSize: '0.7rem', color: '#D6B36A', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginTop: '2px' }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--chart-accent)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', marginTop: '2px' }}>
                         &bull; Recurring ({tx.recurringFrequency})
                       </span>
                     )}
@@ -481,8 +484,8 @@ const Transactions = () => {
                         fontWeight: 600,
                         padding: '0.2rem 0.6rem',
                         borderRadius: '6px',
-                        backgroundColor: tx.category?.color ? `${tx.category.color}15` : 'rgba(255,255,255,0.06)',
-                        color: tx.category?.color || '#CBD5E1'
+                        backgroundColor: tx.category?.color ? `${tx.category.color}15` : 'var(--bg-secondary)',
+                        color: tx.category?.color || 'var(--text-secondary)'
                       }}
                     >
                       <Tag size={12} />
@@ -542,10 +545,10 @@ const Transactions = () => {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '1rem 1.25rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.06)'
+                borderTop: '1px solid var(--border-subtle)'
               }}
             >
-              <div style={{ fontSize: '0.85rem', color: '#94A3B8' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>
                 Showing {(pagination.page - 1) * pagination.limit + 1} -{' '}
                 {Math.min(pagination.page * pagination.limit, pagination.totalCount)} of{' '}
                 {pagination.totalCount} entries
@@ -560,7 +563,7 @@ const Transactions = () => {
                 >
                   Previous
                 </Button>
-                <span style={{ fontSize: '0.85rem', color: '#F8FAFC', padding: '0 0.5rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', padding: '0 0.5rem' }}>
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
                 <Button
@@ -676,10 +679,10 @@ const Transactions = () => {
         subtitle="This action cannot be undone"
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <p style={{ color: '#CBD5E1', fontSize: '0.95rem', margin: 0 }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
             Are you sure you want to delete{' '}
-            <strong style={{ color: '#F8FAFC' }}>"{txToDelete?.description}"</strong> for{' '}
-            <span style={{ color: '#F87171' }}>{formatCurrency(txToDelete?.amount || 0)}</span>?
+            <strong style={{ color: 'var(--text-primary)' }}>&quot;{txToDelete?.description}&quot;</strong> for{' '}
+            <span style={{ color: 'var(--danger)' }}>{formatCurrency(txToDelete?.amount || 0)}</span>?
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
@@ -704,17 +707,17 @@ const Transactions = () => {
           <div
             style={{
               padding: '1.5rem',
-              border: '2px dashed rgba(214, 179, 106, 0.35)',
+              border: '2px dashed var(--border-accent)',
               borderRadius: '12px',
-              backgroundColor: 'rgba(214, 179, 106, 0.04)',
+              backgroundColor: 'var(--bg-secondary)',
               textAlign: 'center'
             }}
           >
-            <Upload size={32} style={{ color: '#D6B36A', marginBottom: '0.75rem' }} />
-            <p style={{ fontSize: '0.9rem', color: '#F8FAFC', marginBottom: '0.25rem', fontWeight: 600 }}>
+            <Upload size={32} style={{ color: 'var(--chart-accent)', marginBottom: '0.75rem' }} />
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '0.25rem', fontWeight: 600 }}>
               Select CSV File
             </p>
-            <p style={{ fontSize: '0.75rem', color: '#94A3B8', marginBottom: '1rem' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '1rem' }}>
               Columns required: <code>amount</code>, <code>type</code> (income/expense), <code>category</code>, <code>description</code>, and optional <code>date</code>
             </p>
 
@@ -722,7 +725,7 @@ const Transactions = () => {
               type="file"
               accept=".csv"
               onChange={(e) => setCsvFile(e.target.files[0] || null)}
-              style={{ color: '#CBD5E1', fontSize: '0.85rem' }}
+              style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}
             />
           </div>
 
@@ -731,16 +734,16 @@ const Transactions = () => {
               style={{
                 padding: '1rem',
                 borderRadius: '10px',
-                backgroundColor: 'rgba(52, 211, 153, 0.1)',
-                border: '1px solid rgba(52, 211, 153, 0.25)',
-                color: '#34D399',
+                backgroundColor: 'var(--success-subtle)',
+                border: '1px solid var(--border-accent)',
+                color: 'var(--primary)',
                 fontSize: '0.85rem'
               }}
             >
               <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Import Finished:</div>
               <div>&bull; {importResult.importedCount} transaction(s) recorded successfully.</div>
               {importResult.skippedCount > 0 && (
-                <div style={{ color: '#FBBF24', marginTop: '0.25rem' }}>
+                <div style={{ color: 'var(--warning-contrast)', marginTop: '0.25rem' }}>
                   &bull; {importResult.skippedCount} row(s) skipped due to formatting errors.
                 </div>
               )}

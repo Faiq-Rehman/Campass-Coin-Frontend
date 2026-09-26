@@ -219,7 +219,7 @@ const Landing = () => {
               style={{
                 background: 'rgba(16, 185, 129, 0.12)',
                 border: '1px solid rgba(16, 185, 129, 0.3)',
-                color: '#00E699',
+                color: 'var(--primary-accent)',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 padding: '0.35rem 1rem',
@@ -323,7 +323,7 @@ const Landing = () => {
                   <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#10B981' }} />
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginLeft: '0.5rem', fontWeight: 600 }}>CampusCoin Student Suite Demo</span>
                 </div>
-                <span style={{ fontSize: '0.75rem', color: '#00E699', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--primary-accent)', fontWeight: 700 }}>
                   Active Semester
                 </span>
               </div>
@@ -340,7 +340,7 @@ const Landing = () => {
                 </div>
                 <div style={{ background: 'var(--bg-card)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Savings Progress</span>
-                  <p style={{ fontSize: '1.35rem', fontWeight: 800, color: '#06B6D4', margin: '0.25rem 0 0 0' }}>85% Target</p>
+                  <p style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--cyan-primary)', margin: '0.25rem 0 0 0' }}>85% Target</p>
                 </div>
               </div>
 
@@ -363,7 +363,7 @@ const Landing = () => {
       <section id="features" style={{ padding: '5rem 0', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="luxury-container">
           <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 3.5rem auto' }}>
-            <span style={{ color: '#00E699', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ color: 'var(--primary-accent)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Comprehensive Platform Capabilities
             </span>
             <h2 style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0.5rem 0 0.75rem 0', color: 'var(--text-primary)' }}>
@@ -412,7 +412,7 @@ const Landing = () => {
       <section id="how-it-works" style={{ padding: '5rem 0', position: 'relative' }}>
         <div className="luxury-container">
           <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 3.5rem auto' }}>
-            <span style={{ color: '#06B6D4', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ color: 'var(--cyan-primary)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Simple 5-Step Process
             </span>
             <h2 style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0.5rem 0 0.75rem 0', color: 'var(--text-primary)' }}>
@@ -437,7 +437,7 @@ const Landing = () => {
                   gap: '0.75rem'
                 }}
               >
-                <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#00E699', opacity: 0.9 }}>
+                <span style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--primary-accent)', opacity: 0.9 }}>
                   {s.step}
                 </span>
                 <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
@@ -455,7 +455,7 @@ const Landing = () => {
       {/* 5. About Section */}
       <section id="about" style={{ padding: '4.5rem 0', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border)' }}>
         <div className="luxury-container" style={{ maxWidth: '850px', textAlign: 'center' }}>
-          <span style={{ color: '#10B981', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <span style={{ color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Our Mission
           </span>
           <h2 style={{ fontSize: '2.1rem', fontWeight: 800, margin: '0.5rem 0 1rem 0', color: 'var(--text-primary)' }}>
@@ -483,19 +483,19 @@ const Landing = () => {
         <div className="luxury-container">
           <div
             style={{
-              background: 'linear-gradient(135deg, #161B22 0%, #0D1117 100%)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
+              background: 'var(--feature-cta-bg)',
+              border: '1px solid var(--border-accent)',
               borderRadius: '24px',
               padding: '4rem 2rem',
               textAlign: 'center',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
-              color: '#FFFFFF'
+              boxShadow: 'var(--feature-cta-shadow)',
+              color: 'var(--feature-cta-text)'
             }}
           >
-            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, marginBottom: '1rem', color: '#FFFFFF' }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, marginBottom: '1rem', color: 'var(--feature-cta-text)' }}>
               Take Control of Your Student Finances
             </h2>
-            <p style={{ color: '#8B949E', maxWidth: '580px', margin: '0 auto 2rem auto', fontSize: '1.05rem', lineHeight: 1.6 }}>
+            <p style={{ color: 'var(--feature-cta-muted)', maxWidth: '580px', margin: '0 auto 2rem auto', fontSize: '1.05rem', lineHeight: 1.6 }}>
               Join hundreds of students mastering their spending habits. Completely free, dynamic, and built specifically for your academic lifestyle.
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>

@@ -162,7 +162,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
         style={{
           marginTop: 'auto',
           paddingTop: '1rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)'
+          borderTop: '1px solid var(--border)'
         }}
       >
         <div
