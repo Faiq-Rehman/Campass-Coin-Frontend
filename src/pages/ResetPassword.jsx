@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Lock, Eye, EyeOff, CheckCircle2, ArrowRight, KeyRound } from 'lucide-react';
 import authService from '../services/authService';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/common/Button';
@@ -10,16 +10,30 @@ const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  const [searchParams] = useSearchParams();
 
+  const [recoveryCode, setRecoveryCode] = useState(searchParams.get('code') || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  useEffect(() => {
+    const codeFromUrl = searchParams.get('code');
+    if (codeFromUrl) {
+      setRecoveryCode(codeFromUrl);
+    }
+  }, [searchParams]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+
+    if (!recoveryCode || recoveryCode.trim().length !== 6) {
+      setErrorMsg('Please enter the 6-digit recovery code from your email.');
+      return;
+    }
 
     if (password.length < 6) {
       setErrorMsg('Password must be at least 6 characters long.');
@@ -34,7 +48,7 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const res = await authService.resetPassword(token, { password });
+      const res = await authService.resetPassword(token, { password, code: recoveryCode.trim() });
       if (res.success) {
         toast.success('Password reset successfully! You can now log in.');
         navigate('/login');
@@ -88,7 +102,7 @@ const ResetPassword = () => {
               marginBottom: '1rem'
             }}
           >
-            <Lock className="w-6 h-6" />
+            <KeyRound className="w-6 h-6" />
           </div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#F8FAFC', margin: '0 0 0.5rem 0' }}>
             Set New Password
@@ -115,6 +129,24 @@ const ResetPassword = () => {
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div>
+            <label className="input-label">Recovery Code</label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="123456"
+                className="luxury-input"
+                style={{ paddingLeft: '2.5rem' }}
+                value={recoveryCode}
+                onChange={(e) => setRecoveryCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                required
+              />
+              <KeyRound className="w-4 h-4 text-[#64748B]" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+            </div>
+          </div>
+
           <div>
             <label className="input-label">New Password</label>
             <div style={{ position: 'relative' }}>

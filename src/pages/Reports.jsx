@@ -106,16 +106,16 @@ const Reports = () => {
       {/* 1. Header with Month Selector & PDF Export */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Financial Reports
           </h1>
-          <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginTop: '0.25rem', marginBottom: 0 }}>
             Analytical breakdowns, 6-month historical trends, and official PDF statements
           </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#111827', padding: '0.35rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-secondary)', padding: '0.35rem 0.75rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
             <Calendar size={16} style={{ color: '#D6B36A' }} />
             <input
               type="month"
@@ -124,7 +124,7 @@ const Reports = () => {
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#F8FAFC',
+                color: 'var(--text-primary)',
                 fontWeight: 600,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -204,7 +204,7 @@ const Reports = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Daily Trend in Current Month */}
           <Card elevated style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC', marginBottom: '1.25rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1.25rem' }}>
               Daily Spending Rhythm &bull; {selectedMonth}
             </h3>
 
@@ -245,10 +245,10 @@ const Reports = () => {
       {activeTab === 'trend' && (
         <Card elevated style={{ padding: '1.5rem' }}>
           <div style={{ marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               6-Month Income vs Expense Trajectory
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '0.2rem', marginBottom: 0 }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '0.2rem', marginBottom: 0 }}>
               Comparative student cash inflow and outflow performance
             </p>
           </div>
@@ -313,7 +313,7 @@ const Reports = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
           {/* Donut Chart */}
           <Card elevated style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC', marginBottom: '1rem', width: '100%' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1rem', width: '100%' }}>
               Category Distribution
             </h3>
 
@@ -356,7 +356,7 @@ const Reports = () => {
 
           {/* Table Breakdown */}
           <Card elevated style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1rem' }}>
               Category Spending Totals
             </h3>
 
@@ -383,16 +383,16 @@ const Reports = () => {
                         backgroundColor: cat.color || COLORS[idx % COLORS.length]
                       }}
                     />
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#F8FAFC' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                       {cat.categoryName}
                     </span>
                   </div>
 
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#F8FAFC' }}>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                       {formatCurrency(cat.totalSpent)}
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                       {cat.percentage}% of total
                     </span>
                   </div>
@@ -422,7 +422,7 @@ const Reports = () => {
               <Sparkles size={22} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 Next Month Expense Projection
               </h3>
               <span style={{ fontSize: '0.75rem', color: '#D6B36A', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>

@@ -20,10 +20,11 @@ const Button = ({
       case 'danger':
         return 'btn-danger';
       case 'ghost':
-        return 'bg-transparent text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] border border-transparent';
+        return 'btn-ghost';
       case 'soft':
-        return 'bg-[#EFF6FF] text-[#1D4ED8] hover:bg-[#DBEAFE] border border-[#BFDBFE]';
+        return 'btn-soft';
       case 'primary':
+        return 'btn-primary';
       case 'gold':
       default:
         return 'btn-gold';

@@ -159,10 +159,10 @@ const Categories = () => {
       {/* 1. Header with Add Category CTA */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Categories
           </h1>
-          <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginTop: '0.25rem', marginBottom: 0 }}>
             System standard templates and your personalized student budget categories
           </p>
         </div>
@@ -210,13 +210,13 @@ const Categories = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
               <Sparkles size={18} style={{ color: '#D6B36A' }} />
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 My Custom Categories ({customCategories.length})
               </h2>
             </div>
 
             {customCategories.length === 0 ? (
-              <Card style={{ padding: '1.75rem', textAlign: 'center', color: '#94A3B8' }}>
+              <Card style={{ padding: '1.75rem', textAlign: 'center', color: 'var(--text-dim)' }}>
                 You haven't created custom categories yet. Click "Add Custom Category" to organize personalized student clubs, hobbies, or unique gigs.
               </Card>
             ) : (
@@ -239,7 +239,7 @@ const Categories = () => {
                         <Tag size={18} />
                       </div>
                       <div>
-                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                           {c.name}
                         </h4>
                         <span style={{ fontSize: '0.75rem', color: c.type === 'income' ? '#34D399' : '#F87171', textTransform: 'capitalize' }}>
@@ -277,7 +277,7 @@ const Categories = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
               <Layers size={18} style={{ color: '#94A3B8' }} />
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 Standard Campus Categories ({defaultCategories.length})
               </h2>
             </div>
@@ -301,7 +301,7 @@ const Categories = () => {
                       <Tag size={16} />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#F8FAFC', margin: 0 }}>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
                         {c.name}
                       </h4>
                       <span style={{ fontSize: '0.75rem', color: c.type === 'income' ? '#34D399' : '#F87171', textTransform: 'capitalize' }}>
@@ -310,7 +310,7 @@ const Categories = () => {
                     </div>
                   </div>
 
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: '#64748B', fontSize: '0.72rem', background: 'rgba(255,255,255,0.04)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-dim)', fontSize: '0.72rem', background: 'var(--bg-primary)', padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}>
                     <Lock size={11} /> Default
                   </span>
                 </Card>

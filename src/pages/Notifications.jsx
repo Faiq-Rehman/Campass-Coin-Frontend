@@ -103,10 +103,10 @@ const Notifications = () => {
       {/* 1. Header with Mark All as Read */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Notifications
           </h1>
-          <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginTop: '0.25rem', marginBottom: 0 }}>
             Real-time budget alerts, campus announcements, and transaction updates
           </p>
         </div>
@@ -176,8 +176,8 @@ const Notifications = () => {
                     alignItems: 'flex-start',
                     justifyContent: 'space-between',
                     gap: '1rem',
-                    borderLeft: !notif.read ? '4px solid #D6B36A' : '1px solid rgba(255,255,255,0.08)',
-                    backgroundColor: !notif.read ? '#151D2E' : '#111827'
+                    borderLeft: !notif.read ? '4px solid #D6B36A' : '1px solid var(--border)',
+                    backgroundColor: !notif.read ? 'var(--bg-secondary)' : 'var(--bg-card)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
@@ -197,7 +197,7 @@ const Notifications = () => {
 
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                           {notif.title}
                         </h4>
                         {!notif.read && (
@@ -213,11 +213,11 @@ const Notifications = () => {
                         )}
                       </div>
 
-                      <p style={{ fontSize: '0.88rem', color: '#CBD5E1', lineHeight: 1.5, margin: 0, marginBottom: '0.5rem' }}>
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0, marginBottom: '0.5rem' }}>
                         {notif.message}
                       </p>
 
-                      <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                         {formatDate(notif.createdAt)}
                       </span>
                     </div>

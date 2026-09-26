@@ -15,11 +15,11 @@ const StatCard = ({
     <motion.div
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #E2E8F0',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
         borderRadius: '14px',
         padding: '1.25rem 1.5rem',
-        boxShadow: '0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)',
+        boxShadow: 'var(--shadow-sm)',
         position: 'relative',
         overflow: 'hidden'
       }}
@@ -42,7 +42,7 @@ const StatCard = ({
       />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-        <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600, letterSpacing: '0.01em' }}>
+        <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', fontWeight: 600, letterSpacing: '0.01em' }}>
           {title}
         </span>
         {Icon && (
@@ -62,7 +62,7 @@ const StatCard = ({
         )}
       </div>
 
-      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', fontFamily: 'var(--font-heading)' }}>
+      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
         {value}
       </div>
 
@@ -86,7 +86,7 @@ const StatCard = ({
               {trend.value}
             </span>
           )}
-          {subtitle && <span style={{ color: '#64748B' }}>{subtitle}</span>}
+          {subtitle && <span style={{ color: 'var(--text-dim)' }}>{subtitle}</span>}
         </div>
       )}
     </motion.div>

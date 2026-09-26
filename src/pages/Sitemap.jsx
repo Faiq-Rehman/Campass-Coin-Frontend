@@ -54,19 +54,6 @@ export default function Sitemap() {
         { name: 'AI Financial Assistant', path: '/ai-assistant', icon: Bot, desc: 'Smart categorization advisor & automated saving tips' },
         { name: 'Student Profile', path: '/profile', icon: User, desc: 'Academic year, baseline allowance, and monthly goals' }
       ]
-    },
-    {
-      title: 'Isolated Admin Portal',
-      badge: 'Admin Role Required',
-      badgeClass: 'badge-amber',
-      description: 'Dedicated administration console. Completely isolated from normal student sessions.',
-      links: [
-        { name: 'Admin Dashboard', path: '/admin/dashboard', icon: Shield, desc: 'System-wide statistics, active student counts & totals' },
-        { name: 'Student Directory', path: '/admin/students', icon: Users, desc: 'Account status management, activation & password resets' },
-        { name: 'Global Categories', path: '/admin/categories', icon: Tags, desc: 'System-wide expense category templates' },
-        { name: 'Financial Tips', path: '/admin/tips', icon: Lightbulb, desc: 'Curated financial guidance and actionable student tips' },
-        { name: 'Audit Logs', path: '/admin/logs', icon: FileText, desc: 'Immutable timeline of administrative actions & status changes' }
-      ]
     }
   ];
 

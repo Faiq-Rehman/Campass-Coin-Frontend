@@ -21,10 +21,10 @@ const EmptyState = ({
         justifyContent: 'center',
         padding: '3rem 1.5rem',
         textAlign: 'center',
-        background: '#FFFFFF',
-        border: '1px dashed #CBD5E1',
+        background: 'var(--bg-card)',
+        border: '1px dashed var(--border)',
         borderRadius: '16px',
-        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)'
+        boxShadow: 'var(--shadow-sm)'
       }}
       className={className}
     >
@@ -34,8 +34,8 @@ const EmptyState = ({
             width: '60px',
             height: '60px',
             borderRadius: '50%',
-            background: '#EFF6FF',
-            color: '#2563EB',
+            background: 'var(--blue-subtle)',
+            color: 'var(--blue-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -46,11 +46,11 @@ const EmptyState = ({
         </div>
       )}
 
-      <h4 style={{ fontSize: '1.15rem', fontWeight: 600, color: '#0F172A', marginBottom: '0.4rem' }}>
+      <h4 style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
         {title}
       </h4>
 
-      <p style={{ fontSize: '0.9rem', color: '#64748B', maxWidth: '380px', marginBottom: actionText ? '1.5rem' : 0 }}>
+      <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', maxWidth: '380px', marginBottom: actionText ? '1.5rem' : 0 }}>
         {description}
       </p>
 

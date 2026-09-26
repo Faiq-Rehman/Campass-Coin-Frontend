@@ -143,10 +143,10 @@ const Profile = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', paddingBottom: '3rem' }}>
       {/* 1. Page Header */}
       <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
           Student Profile
         </h1>
-        <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
+        <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginTop: '0.25rem', marginBottom: 0 }}>
           Manage your student identity, baseline monthly allowance, and savings targets
         </p>
       </div>
@@ -170,10 +170,10 @@ const Profile = () => {
               <User size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 Academic Details & Baseline
               </h3>
-              <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                 Used to compute balance baselines and custom spending advice
               </span>
             </div>
@@ -280,10 +280,10 @@ const Profile = () => {
               <KeyRound size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 Security & Password
               </h3>
-              <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                 Safeguard your student account with an encrypted password
               </span>
             </div>

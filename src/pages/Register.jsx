@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -14,7 +14,8 @@ import {
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -39,8 +40,30 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const yearDropdownRef = useRef(null);
+
+  const academicYearOptions = [
+    '1st Year (Freshman)',
+    '2nd Year (Sophomore)',
+    '3rd Year (Junior)',
+    '4th Year (Senior)',
+    'Graduate / Masters',
+    'Other'
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (yearDropdownRef.current && !yearDropdownRef.current.contains(event.target)) {
+        setYearDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -246,7 +269,7 @@ const Register = () => {
                   name="fullName"
                   placeholder="e.g. Alex Morgan"
                   className="luxury-input"
-                  style={{ paddingLeft: '2.5rem' }}
+                  style={{ paddingLeft: '2.5rem', backgroundColor: 'var(--color-input-bg)', color: 'var(--text-primary)' }}
                   value={formData.fullName}
                   onChange={handleChange}
                   required
@@ -264,7 +287,7 @@ const Register = () => {
                   name="email"
                   placeholder="alex@university.edu"
                   className="luxury-input"
-                  style={{ paddingLeft: '2.5rem' }}
+                  style={{ paddingLeft: '2.5rem', backgroundColor: 'var(--color-input-bg)', color: 'var(--text-primary)' }}
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -331,22 +354,79 @@ const Register = () => {
             {/* Academic Year */}
             <div>
               <label className="input-label">Academic Year</label>
-              <div style={{ position: 'relative' }}>
-                <select
-                  name="academicYear"
-                  className="luxury-select"
-                  style={{ paddingLeft: '2.5rem' }}
-                  value={formData.academicYear}
-                  onChange={handleChange}
+              <div ref={yearDropdownRef} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setYearDropdownOpen((prev) => !prev)}
+                  style={{
+                    width: '100%',
+                    backgroundColor: 'var(--bg-secondary)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '10px',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.95rem',
+                    padding: '0.75rem 2.5rem 0.75rem 2.5rem',
+                    textAlign: 'left',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
                 >
-                  <option value="1st Year">1st Year (Freshman)</option>
-                  <option value="2nd Year">2nd Year (Sophomore)</option>
-                  <option value="3rd Year">3rd Year (Junior)</option>
-                  <option value="4th Year">4th Year (Senior)</option>
-                  <option value="Graduate">Graduate / Masters</option>
-                  <option value="Other">Other</option>
-                </select>
-                <GraduationCap size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
+                  <span>{formData.academicYear}</span>
+                  <ChevronDown size={16} style={{ color: 'var(--text-dim)' }} />
+                </button>
+                <GraduationCap
+                  size={17}
+                  style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748B', pointerEvents: 'none' }}
+                />
+
+                {yearDropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      left: 0,
+                      right: 0,
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '10px',
+                      boxShadow: 'var(--shadow-lg)',
+                      overflow: 'hidden',
+                      zIndex: 30
+                    }}
+                  >
+                    {academicYearOptions.map((option) => {
+                      const value = option.split(' ')[0] + ' Year';
+                      const normalizedValue = option.includes('Graduate') ? 'Graduate' : option.includes('Other') ? 'Other' : value;
+
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({ ...prev, academicYear: normalizedValue }));
+                            setYearDropdownOpen(false);
+                          }}
+                          style={{
+                            width: '100%',
+                            border: 'none',
+                            background: normalizedValue === formData.academicYear ? 'var(--blue-subtle)' : 'var(--bg-secondary)',
+                            color: 'var(--text-primary)',
+                            padding: '0.8rem 1rem',
+                            textAlign: 'left',
+                            fontSize: '0.92rem',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s ease'
+                          }}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
 

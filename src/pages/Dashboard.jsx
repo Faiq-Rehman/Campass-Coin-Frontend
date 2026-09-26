@@ -149,16 +149,17 @@ const Dashboard = () => {
           <span className="badge-gold" style={{ marginBottom: '0.4rem' }}>
             {currentMonthName} Academic Term
           </span>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: '#F8FAFC' }}>
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
             Financial Overview
           </h2>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div className="dashboard-header-actions">
           <Button
             variant="gold"
             size="sm"
             icon={Plus}
+            className="dashboard-action-btn"
             onClick={() => outletContext?.openQuickAdd ? outletContext.openQuickAdd() : navigate('/transactions')}
           >
             Record Entry
@@ -167,6 +168,7 @@ const Dashboard = () => {
             variant="outline"
             size="sm"
             icon={PiggyBank}
+            className="dashboard-action-btn"
             onClick={() => navigate('/budgets')}
           >
             Set Budget
@@ -175,6 +177,7 @@ const Dashboard = () => {
             variant="outline"
             size="sm"
             icon={FileSpreadsheet}
+            className="dashboard-action-btn"
             onClick={() => navigate('/transactions')}
           >
             Import CSV
@@ -299,9 +302,9 @@ const Dashboard = () => {
             </div>
 
             {topSpendingCategory ? (
-              <div style={{ background: '#0D1320', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+              <div style={{ background: 'var(--bg-secondary)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#F8FAFC' }}>
+                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {topSpendingCategory.name}
                   </span>
                   <Badge variant="warning">{topSpendingCategory.percentage}% of Spend</Badge>
@@ -309,22 +312,22 @@ const Dashboard = () => {
                 <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#F87171' }}>
                   {formatCurrency(topSpendingCategory.amount)}
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.4rem', margin: 0 }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.4rem', margin: 0 }}>
                   Highest outflow in {currentMonthName}
                 </p>
               </div>
             ) : (
-              <p style={{ color: '#64748B', fontSize: '0.85rem' }}>No expenses recorded this month.</p>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>No expenses recorded this month.</p>
             )}
           </div>
 
           {/* Savings Goal Progress Meter */}
-          <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '1rem' }}>
+          <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-              <span style={{ color: '#94A3B8' }}>Semester Savings Goal</span>
+              <span style={{ color: 'var(--text-dim)' }}>Semester Savings Goal</span>
               <span style={{ color: '#34D399', fontWeight: 700 }}>{summary.savingsGoalProgress || 0}%</span>
             </div>
-            <div style={{ width: '100%', height: '8px', backgroundColor: '#0D1320', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
               <div
                 style={{
                   width: `${Math.min(100, summary.savingsGoalProgress || 0)}%`,
@@ -335,7 +338,7 @@ const Dashboard = () => {
                 }}
               />
             </div>
-            <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748B', marginTop: '0.4rem' }}>
+            <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.4rem' }}>
               Target: {formatCurrency(summary.savingsGoal || 0)}
             </span>
           </div>
@@ -367,14 +370,14 @@ const Dashboard = () => {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {budgetVsActual.map((b) => (
-                <div key={b.budgetId} style={{ background: '#0D1320', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <div key={b.budgetId} style={{ background: 'var(--bg-secondary)', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#F8FAFC' }}>{b.category}</span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>{b.category}</span>
                     <span style={{ fontSize: '0.8rem', fontWeight: 700, color: b.isOverBudget ? '#F87171' : b.percentageUsed >= 80 ? '#FBBF24' : '#34D399' }}>
                       {b.percentageUsed}%
                     </span>
                   </div>
-                  <div style={{ width: '100%', height: '6px', backgroundColor: '#111827', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-primary)', borderRadius: '3px', overflow: 'hidden' }}>
                     <div
                       style={{
                         width: `${Math.min(100, b.percentageUsed)}%`,
@@ -384,7 +387,7 @@ const Dashboard = () => {
                       }}
                     />
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748B', marginTop: '0.35rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.35rem' }}>
                     <span>Spent: {formatCurrency(b.spentAmount)}</span>
                     <span>Limit: {formatCurrency(b.limitAmount)}</span>
                   </div>
@@ -424,9 +427,9 @@ const Dashboard = () => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '0.65rem 0.85rem',
-                    background: '#0D1320',
+                    background: 'var(--bg-secondary)',
                     borderRadius: '10px',
-                    border: '1px solid rgba(255,255,255,0.04)'
+                    border: '1px solid var(--border)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
@@ -446,10 +449,10 @@ const Dashboard = () => {
                       {tx.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownLeft className="w-4 h-4" />}
                     </div>
                     <div style={{ overflow: 'hidden' }}>
-                      <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#F8FAFC', margin: 0 }} className="truncate">
+                      <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }} className="truncate">
                         {tx.description}
                       </p>
-                      <span style={{ fontSize: '0.7rem', color: '#64748B' }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
                         {tx.category?.name || 'Category'} &bull; {formatDate(tx.date)}
                       </span>
                     </div>
@@ -486,8 +489,8 @@ const Dashboard = () => {
               <div
                 key={tip._id}
                 style={{
-                  background: '#0D1320',
-                  border: tip.isPinned ? '1px solid #D6B36A' : '1px solid rgba(255, 255, 255, 0.06)',
+                  background: 'var(--bg-secondary)',
+                  border: tip.isPinned ? '1px solid #D6B36A' : '1px solid var(--border)',
                   borderRadius: '12px',
                   padding: '1rem',
                   display: 'flex',

@@ -91,10 +91,10 @@ const Tips = () => {
       {/* 1. Header with Generate Fresh Tips */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
             Saving Tips
           </h1>
-          <p style={{ fontSize: '0.88rem', color: '#94A3B8', marginTop: '0.25rem', marginBottom: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', marginTop: '0.25rem', marginBottom: 0 }}>
             Actionable student budgeting recommendations triggered by your transaction habits
           </p>
         </div>
@@ -130,7 +130,7 @@ const Tips = () => {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                 <Pin size={16} style={{ color: '#D6B36A' }} />
-                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
+                <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   Pinned Priority Advice ({pinnedTips.length})
                 </h2>
               </div>
@@ -183,7 +183,7 @@ const Tips = () => {
                               onClick={() => handlePin(tip._id)}
                               title="Unpin Tip"
                               className="icon-action-btn"
-                              style={{ color: '#D6B36A' }}
+                              style={{ color: 'var(--warning)' }}
                             >
                               <Pin size={15} />
                             </button>
@@ -191,19 +191,20 @@ const Tips = () => {
                               onClick={() => handleDismiss(tip._id)}
                               title="Dismiss Tip"
                               className="icon-action-btn delete"
+                              style={{ color: 'var(--text-dim)' }}
                             >
                               <X size={15} />
                             </button>
                           </div>
                         </div>
 
-                        <p style={{ fontSize: '0.95rem', color: '#F8FAFC', lineHeight: 1.6, margin: 0, flex: 1 }}>
+                        <p style={{ fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: 1.6, margin: 0, flex: 1 }}>
                           {tip.tipText}
                         </p>
 
-                        <div style={{ fontSize: '0.75rem', color: '#64748B', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.75rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
                           <span>Trigger: {tip.ruleTriggered?.replace(/_/g, ' ')}</span>
-                          <span style={{ color: '#D6B36A', fontWeight: 600 }}>&bull; Pinned</span>
+                          <span style={{ color: 'var(--warning)', fontWeight: 600 }}>&bull; Pinned</span>
                         </div>
                       </Card>
                     </motion.div>
@@ -216,7 +217,7 @@ const Tips = () => {
           {/* 3. Regular Active Tips */}
           {regularTips.length > 0 && (
             <div>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', marginBottom: '1rem' }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1rem' }}>
                 Active Suggestions ({regularTips.length})
               </h2>
 
@@ -266,6 +267,7 @@ const Tips = () => {
                               onClick={() => handlePin(tip._id)}
                               title="Pin to Top"
                               className="icon-action-btn"
+                              style={{ color: 'var(--text-dim)' }}
                             >
                               <Pin size={15} />
                             </button>
@@ -273,17 +275,18 @@ const Tips = () => {
                               onClick={() => handleDismiss(tip._id)}
                               title="Dismiss"
                               className="icon-action-btn delete"
+                              style={{ color: 'var(--text-dim)' }}
                             >
                               <X size={15} />
                             </button>
                           </div>
                         </div>
 
-                        <p style={{ fontSize: '0.92rem', color: '#E2E8F0', lineHeight: 1.6, margin: 0, flex: 1 }}>
+                        <p style={{ fontSize: '0.92rem', color: 'var(--text-primary)', lineHeight: 1.6, margin: 0, flex: 1 }}>
                           {tip.tipText}
                         </p>
 
-                        <div style={{ fontSize: '0.75rem', color: '#64748B', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '0.75rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
                           Rule: {tip.ruleTriggered?.replace(/_/g, ' ')}
                         </div>
                       </Card>

@@ -5,6 +5,7 @@ import { Coins, Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Button from '../components/common/Button';
+import ThemeToggle from '../components/common/ThemeToggle';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const Login = () => {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#F8FAFC',
+        backgroundColor: 'var(--bg-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -56,6 +57,9 @@ const Login = () => {
         overflow: 'hidden'
       }}
     >
+      <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 2 }}>
+        <ThemeToggle />
+      </div>
       {/* Subtle Background Glow */}
       <div
         className="bg-ambient"
@@ -76,11 +80,11 @@ const Login = () => {
         style={{
           width: '100%',
           maxWidth: '440px',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E2E8F0',
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border)',
           borderRadius: '20px',
           padding: '2.5rem 2rem',
-          boxShadow: '0 20px 40px rgba(15, 23, 42, 0.08), 0 2px 10px rgba(15, 23, 42, 0.04)',
+          boxShadow: 'var(--shadow-md)',
           position: 'relative',
           zIndex: 1
         }}
@@ -103,15 +107,15 @@ const Login = () => {
             >
               <Coins className="w-6 h-6 font-bold" />
             </div>
-            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
+            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               Campus Coin
             </span>
           </Link>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.5rem 0' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 0.5rem 0' }}>
             Welcome Back
           </h2>
-          <p style={{ fontSize: '0.88rem', color: '#64748B', margin: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-dim)', margin: 0 }}>
             Sign in to continue managing your student finances
           </p>
         </div>
@@ -206,7 +210,7 @@ const Login = () => {
         </form>
 
         {/* Footer Link */}
-        <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: '#64748B' }}>
+        <div style={{ textAlign: 'center', marginTop: '1.75rem', fontSize: '0.85rem', color: 'var(--text-dim)' }}>
           Don't have an account?{' '}
           <Link to="/register" style={{ color: '#2563EB', fontWeight: 600, textDecoration: 'none' }}>
             Create one free

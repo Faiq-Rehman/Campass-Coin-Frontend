@@ -52,8 +52,8 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
         flexDirection: 'column',
         height: '100%',
         padding: '1.5rem 1rem',
-        backgroundColor: '#0A1128',
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+        backgroundColor: 'var(--bg-card-elevated)',
+        borderRight: '1px solid var(--border)',
         boxSizing: 'border-box'
       }}
     >
@@ -88,7 +88,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               style={{
                 fontSize: '1.15rem',
                 fontWeight: 700,
-                color: '#F8FAFC',
+                color: 'var(--text-primary)',
                 margin: 0,
                 letterSpacing: '-0.02em'
               }}
@@ -98,7 +98,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             <span
               style={{
                 fontSize: '0.7rem',
-                color: '#38BDF8',
+                color: 'var(--cyan-primary)',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
@@ -124,9 +124,9 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               right: '0',
               width: '34px',
               height: '34px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#94A3B8',
+              background: 'var(--bg-secondary)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-dim)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -171,9 +171,9 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '0.65rem 0.75rem',
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'var(--bg-secondary)',
             borderRadius: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.08)'
+            border: '1px solid var(--border)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', overflow: 'hidden' }}>
@@ -199,7 +199,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
                 style={{
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  color: '#F8FAFC',
+                  color: 'var(--text-primary)',
                   margin: 0,
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
@@ -211,7 +211,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
               <p
                 style={{
                   fontSize: '0.7rem',
-                  color: '#94A3B8',
+                  color: 'var(--text-dim)',
                   margin: 0,
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',

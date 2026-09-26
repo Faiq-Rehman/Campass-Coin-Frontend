@@ -292,6 +292,47 @@ select {
   transform: translateY(-1px);
 }
 
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border);
+  transform: translateY(-1px);
+}
+
+.btn-soft {
+  background: var(--blue-subtle);
+  color: var(--blue-primary);
+  border: 1px solid var(--border-cyan);
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-soft:hover {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.22);
+  transform: translateY(-1px);
+}
+
 .btn-danger {
   background: var(--danger-subtle);
   color: var(--danger);
@@ -333,9 +374,40 @@ select {
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
 }
 
+.luxury-input:-webkit-autofill,
+.luxury-select:-webkit-autofill,
+.luxury-textarea:-webkit-autofill,
+.luxury-input:-webkit-autofill:hover,
+.luxury-select:-webkit-autofill:hover,
+.luxury-textarea:-webkit-autofill:hover,
+.luxury-input:-webkit-autofill:focus,
+.luxury-select:-webkit-autofill:focus,
+.luxury-textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-input-bg) inset;
+  box-shadow: 0 0 0 1000px var(--color-input-bg) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 .luxury-input::placeholder,
 .luxury-textarea::placeholder {
   color: var(--text-muted);
+}
+
+.luxury-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2.5rem;
+}
+
+.luxury-select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
 }
 
 .input-label {
@@ -513,6 +585,29 @@ select {
   border-color: var(--blue-primary);
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
   outline: none;
+}
+
+.dashboard-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dashboard-action-btn {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .dashboard-header-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .dashboard-action-btn {
+    flex: 1 1 100%;
+  }
 }
 
 /* Sidebar navigation items */

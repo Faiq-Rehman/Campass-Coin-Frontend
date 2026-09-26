@@ -111,7 +111,9 @@ const ForgotPassword = () => {
                 lineHeight: 1.5
               }}
             >
-              Password recovery token generated successfully!
+              {successData.emailSent
+                ? 'Password reset code has been sent to your email.'
+                : 'Password reset code generated. SMTP is not configured, so the code is shown below for local testing.'}
             </div>
 
             <div
@@ -124,18 +126,19 @@ const ForgotPassword = () => {
               }}
             >
               <span style={{ fontSize: '0.75rem', color: '#94A3B8', textTransform: 'uppercase' }}>
-                Your Reset Token
+                Your Recovery Code
               </span>
               <p
                 style={{
                   fontFamily: 'monospace',
-                  fontSize: '0.8rem',
+                  fontSize: '1.2rem',
                   color: '#F0D89A',
-                  wordBreak: 'break-all',
-                  margin: '0.4rem 0'
+                  letterSpacing: '0.25rem',
+                  margin: '0.5rem 0',
+                  fontWeight: 700
                 }}
               >
-                {successData.resetToken}
+                {successData.resetCode}
               </p>
               <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
                 Valid for {successData.expiresIn || '1 hour'}
@@ -143,11 +146,11 @@ const ForgotPassword = () => {
             </div>
 
             <Link
-              to={`/reset-password/${successData.resetToken}`}
+              to={`/reset-password/${successData.resetToken}?code=${encodeURIComponent(successData.resetCode)}`}
               style={{ textDecoration: 'none' }}
             >
               <Button variant="gold" style={{ width: '100%' }}>
-                Proceed to Reset Password
+                Enter Code & Reset Password
               </Button>
             </Link>
           </div>
