@@ -41,7 +41,10 @@ const Navbar = ({ isMobileOpen, onMobileMenuToggle, onQuickAddClick }) => {
 
   return (
     <header
+<<<<<<< HEAD
       className="app-navbar"
+=======
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
       style={{
         height: '70px',
         backgroundColor: 'var(--bg-card)',

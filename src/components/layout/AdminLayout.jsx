@@ -1,16 +1,25 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
+=======
+import React from 'react';
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import ThemeToggle from '../common/ThemeToggle';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+<<<<<<< HEAD
 import { ShieldCheck, LogOut, ArrowLeft, Menu, X } from 'lucide-react';
+=======
+import { ShieldCheck, LogOut, ArrowLeft } from 'lucide-react';
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
 
 const AdminLayout = () => {
   const { admin, logoutAdmin } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+<<<<<<< HEAD
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -21,6 +30,8 @@ const AdminLayout = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+=======
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
 
   const handleLogout = () => {
     logoutAdmin();
@@ -41,12 +52,21 @@ const AdminLayout = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div style={{ display: 'flex', height: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', overflow: 'hidden' }}>
       {/* Admin Sidebar */}
       <AdminSidebar mobileOpen={mobileSidebarOpen} setMobileOpen={setMobileSidebarOpen} />
 
       {/* Main Admin Content */}
       <div className="admin-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative', overflow: 'hidden' }}>
+=======
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      {/* Admin Sidebar */}
+      <AdminSidebar />
+
+      {/* Main Admin Content */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
         {/* Subtle emerald/cyan ambient admin glow */}
         <div
           className="bg-ambient"
@@ -76,6 +96,7 @@ const AdminLayout = () => {
             gap: '1rem'
           }}
         >
+<<<<<<< HEAD
           <div className="admin-header-left">
             <button
               type="button"
@@ -86,16 +107,25 @@ const AdminLayout = () => {
               {mobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <div>
+=======
+          <div>
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
             <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               CampusCoin Admin Portal
             </div>
             <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               {getPageTitle()}
             </div>
+<<<<<<< HEAD
             </div>
           </div>
 
           <div className="admin-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+=======
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
             {/* Theme Toggle */}
             <ThemeToggle />
 
@@ -178,7 +208,11 @@ const AdminLayout = () => {
           </div>
         </header>
 
+<<<<<<< HEAD
         <main className="admin-content" style={{ flex: 1, padding: '2rem 1.75rem', position: 'relative', zIndex: 1, overflowY: 'auto' }}>
+=======
+        <main style={{ flex: 1, padding: '2rem 1.75rem', position: 'relative', zIndex: 1 }}>
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
           <div className="luxury-container" style={{ padding: 0 }}>
             <Outlet />
           </div>

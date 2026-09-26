@@ -210,7 +210,11 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+<<<<<<< HEAD
       <Route path="/reset-password" element={<ResetPassword />} />
+=======
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
       <Route path="/verify-email/:token" element={<VerifyEmail />} />
       <Route path="/sitemap" element={<Sitemap />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />

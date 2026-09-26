@@ -30,7 +30,11 @@ const AppLayout = () => {
       />
 
       {/* Main Content Area */}
+<<<<<<< HEAD
       <div className="app-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+=======
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
         {/* Ambient subtle background glows */}
         <div
           className="bg-ambient"
@@ -61,7 +65,11 @@ const AppLayout = () => {
         />
 
         {/* Dynamic Nested Page Content */}
+<<<<<<< HEAD
         <main className="app-content" style={{ flex: 1, padding: '1.5rem', position: 'relative', zIndex: 1 }}>
+=======
+        <main style={{ flex: 1, padding: '1.5rem', position: 'relative', zIndex: 1 }}>
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
           <div className="luxury-container" style={{ padding: 0 }}>
             <Outlet context={{ openQuickAdd: () => setIsQuickAddOpen(true) }} />
           </div>

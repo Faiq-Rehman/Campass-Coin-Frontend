@@ -1,11 +1,16 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
 const DEFAULT_LOCAL_API_URL = 'http://localhost:5000/api';
 const DEFAULT_REMOTE_API_URL = 'https://campass-coin-backend-production.up.railway.app/api';
 
 // Use the local backend during development so admin routes match the current codebase.
 // Production builds can still override this through VITE_API_URL.
 let rawBase = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? DEFAULT_LOCAL_API_URL : DEFAULT_REMOTE_API_URL)).trim();
+=======
+// Live Railway backend base URL configuration
+let rawBase = (import.meta.env.VITE_API_URL || 'https://campass-coin-backend-production.up.railway.app').trim();
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
 
 // Ensure protocol is present
 if (!rawBase.startsWith('http://') && !rawBase.startsWith('https://')) {

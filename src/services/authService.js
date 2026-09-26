@@ -16,6 +16,7 @@ const authService = {
     return response.data;
   },
 
+<<<<<<< HEAD
   resendResetCode: async (data) => {
     const response = await api.post('/auth/resend-reset-code', data);
     return response.data;
@@ -26,6 +27,8 @@ const authService = {
     return response.data;
   },
 
+=======
+>>>>>>> af9c7e2b82409c8810abe835d61cc61759555604
   resetPassword: async (token, data) => {
     const response = await api.post(`/auth/reset-password/${token}`, data);
     return response.data;
